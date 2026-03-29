@@ -1,0 +1,47 @@
+World & Core Mechanics
+
+    The simulator needs a 2D NxM grid.
+
+    The simulation must be turn-based.
+
+    Each cell can hold a maximum of one organism at a time.
+
+    Actions are ordered first by the highest initiative, and then by age for ties.
+
+    Collisions are resolved by comparing strength, where the stronger organism wins. If strengths are equal, the attacker wins.
+
+Core Classes & Architecture
+
+    A World class is required to manage gameplay, hold the organisms, and handle turns via methods like makeTurn() and drawWorld().
+
+    An abstract Organism base class must be created with fields for strength, initiative, position, and a reference to the world. It requires action(), collision(), and draw() methods.
+
+    An Animal abstract subclass must be implemented to handle base random movement and multiplication upon colliding with another animal of the same species.
+
+    A Plant abstract subclass must be created with a default initiative of 0. It must implement a probability to "sow" or spread to a neighboring free cell during its action.
+
+Specific Organisms
+
+    The Human Player: There must be exactly one human on the map, controlled by the arrow keys, with a base strength of 5 and initiative of 4.
+
+    Special Ability: You must implement exactly one chosen special ability for the Human (Immortality, Magical potion, Antelope's speed, Alzur's shield, or Purification). This ability must last for 5 turns and have a 5-turn cooldown period.
+
+    Animals: You need to implement specific subclasses for the Wolf, Sheep, Fox, Turtle, and Antelope. (Note: The Cyber-sheep is only mandatory if you are building the project in Python ).
+
+    Plants: You need to implement specific subclasses for Grass, Sow thistle, Guarana, Belladonna, and Sosnowsky's hogweed.
+
+UI and Initialization
+
+    The simulation must begin with several instances of each organism type already spawned in the world.
+
+    You must include a text box or console line to display event messages, such as fight results or plant consumption.
+
+    Your first name, last name, and index number must be displayed somewhere in the user interface.
+
+Language-Specific Milestone Features
+
+    If building in C++: The project requires a console UI using ASCII symbols. To achieve full marks (5 points), you must implement save and load functionality to and from a file.
+
+    If building in Java or Python: The project requires a GUI library, like Swing for Java. For 4 points, you need to allow users to add new organisms of any kind by clicking on a free map cell. For 5 points, you must abstract the world to support both standard grid and hexagonal grid layouts.
+
+

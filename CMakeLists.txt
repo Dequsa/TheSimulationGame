@@ -15,5 +15,15 @@ add_executable(C__1 main.cpp
         Plants.h
         Matrix.cpp
         Matrix.h
-        utility.cpp
-        utility.h)
+        Animals/Wolf.cpp
+        Animals/Wolf.h
+        Animals/Sheep.cpp
+        Animals/Sheep.h
+        Animals/Fox.cpp
+        Animals/Fox.h
+        Animals/Turtle.cpp
+        Animals/Turtle.h
+        Animals/Antelope.cpp
+        Animals/Antelope.h
+        Utils.h
+)

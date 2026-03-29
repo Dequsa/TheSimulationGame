@@ -4,25 +4,39 @@
 
 #ifndef C__1_ORGANISM_H
 #define C__1_ORGANISM_H
-#include <vector>
 #include <memory>
+#include <vector>
+#include "Utils.h"
+#include "WorldManager.h"
 #pragma once
 
 class Organism {
 private:
-    std::vector<int> pos_;
-    int str_;
-    int init_;
-    std::unique_ptr<int> world_;
-    public:
+    Position pos_{};
+    int str_{};
+    int init_{};
+    const std::vector<std::vector<char>> *world_map_;
+
+    Position ChooseAndSetSpawnPoint();
+
+public:
     Organism() = default;
-    Organism( const int &str, const int &init, const std::vector<int>& pos);
-    Organism(const Organism& org);
-    virtual ~Organism() = default;
+
+    Organism(const WorldManager &wm, const int &str, const int &init);
+
+    Organism(const int &str, const int &init, const Position &pos);
+
+    Organism(const Organism &org);
+
+    virtual ~Organism() = 0;
+
     virtual void Update() = 0;
+
     // organism getters
-    std::vector<int> GetPosition() const;
+    Position GetPosition() const;
+
     int GetStr();
+
     int GetInit();
 };
 
