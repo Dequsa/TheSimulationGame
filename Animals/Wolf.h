@@ -7,14 +7,16 @@
 #include "../Animals.h"
 
 class Wolf final : public Animal {
-    int strength_ = 9;
-    int initiative_ = 5;
-    Position pos_{};
 public:
-    Wolf();
+    Wolf(std::vector<std::vector<char>> & world_map, const int str, const int init): Animal(world_map, str, init) {};
 
-    ~Wolf() override;
+    ~Wolf() override = default;
 };
+
+namespace WOLF {
+    constexpr int STR = 9;
+    constexpr int INIT = 5;
+}
 
 
 #endif //C__1_WOLF_H

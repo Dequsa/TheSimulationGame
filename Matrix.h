@@ -4,15 +4,8 @@
 
 #ifndef C__1_MATRIX_H
 #define C__1_MATRIX_H
-
-
-class Matrix {
-public:
-    Matrix();
-    ~Matrix();
-
-
-};
+#include "WorldManager.h"
+#include "Animals.h"
 
 
 #endif //C__1_MATRIX_H

@@ -4,9 +4,3 @@
 
 #include "./Wolf.h"
 #include "../Utils.h"
-
-Wolf::Wolf() : Animal(initiative_, strength_, pos_) {
-}
-
-Wolf::~Wolf() {
-}

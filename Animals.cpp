@@ -8,7 +8,8 @@ bool Animal::CheckCollision() {
 
 }
 
-Animal::Animal(const int &str, const int &init, const Position & pos) : Organism(str, init, pos) {};
+Animal::Animal(std::vector<std::vector<char> > &world_map, const int &str, const int &init) : Organism(world_map, str, init) {
+};
 
 void Animal::Update() {
     // move -> check collision -> draw
@@ -23,7 +24,7 @@ void Animal::Move() {
     // uint8_t dir = ;
 }
 
-bool Animal::Collision() {
+void Animal::Collision() {
 }
 
 void Animal::Draw() {

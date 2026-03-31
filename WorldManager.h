@@ -11,7 +11,7 @@
 
 class WorldManager {
 private:
-    std::vector<Organism> organisms_;
+    std::vector<Organism*> organisms_;
     std::vector<std::vector<char>> world_map_;
 
 public:
@@ -23,7 +23,7 @@ public:
 
     void Render();
 
-    Organism *SpawnOrganism(const uint8_t type);
+    Organism *SpawnAnimals(const uint8_t type);
 
     void KillOrganism();
 

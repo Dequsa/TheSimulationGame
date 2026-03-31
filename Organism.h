@@ -15,18 +15,17 @@ private:
     Position pos_{};
     int str_{};
     int init_{};
-    const std::vector<std::vector<char>> *world_map_;
+    std::vector<std::vector<char>> &world_map_;
 
     Position ChooseAndSetSpawnPoint();
 
 public:
-    Organism() = default;
 
-    Organism(const WorldManager &wm, const int &str, const int &init);
+    Organism(std::vector<std::vector<char>> &world_map, const int &str, const int &init);
 
-    Organism(const int &str, const int &init, const Position &pos);
+    Organism(std::vector<std::vector<char>> &world_map, const int &str, const int &init, const Position &pos);
 
-    Organism(const Organism &org);
+    Organism(const Organism &org) = default;
 
     virtual ~Organism() = 0;
 
