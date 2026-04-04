@@ -6,17 +6,20 @@
 #define C__1_WOLF_H
 #include "../Animals.h"
 
-class Wolf final : public Animal {
-public:
-    Wolf(std::vector<std::vector<char>> & world_map, const int str, const int init): Animal(world_map, str, init) {};
-
-    ~Wolf() override = default;
-};
 
 namespace WOLF {
     constexpr int STR = 9;
     constexpr int INIT = 5;
 }
+
+class Wolf final : public Animal {
+public:
+    Wolf(std::vector<std::vector<char> > &world_map, const Position &spawn_pos) : Animal(
+        world_map, WOLF::STR, WOLF::INIT, spawn_pos) {
+    };
+
+    ~Wolf() override = default;
+};
 
 
 #endif //C__1_WOLF_H

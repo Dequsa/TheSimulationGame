@@ -9,6 +9,10 @@
 #include "Organism.h"
 
 class Animal : public Organism {
+    bool CheckIfMovingPositionIsCorner(const DIRECTIONS dir);
+
+    DIRECTIONS GetMoveDirection();
+
 protected:
     bool CheckCollision();
 
@@ -19,7 +23,12 @@ protected:
     void Draw();
 
 public:;
-    Animal(std::vector<std::vector<char> > &world_map, const int &str, const int &init);
+
+    //Animal(std::vector<std::vector<char> > &world_map, const int &str, const int &init);
+
+    Animal(std::vector<std::vector<char> > &world_map, const int str, const int init, const Position &spawn_pos) : Organism(
+        world_map, str, init, spawn_pos) {
+    }
 
     ~Animal() override = default;
 
@@ -27,11 +36,11 @@ public:;
 };
 
 enum class AnimalTypes {
-    WOLF,       // 0
-    SHEEP,      // 1
-    FOX,        // 2
-    TURTLE,     // 3
-    ANTELOPE    // 4
+    WOLF, // 0
+    SHEEP, // 1
+    FOX, // 2
+    TURTLE, // 3
+    ANTELOPE // 4
 };
 
 

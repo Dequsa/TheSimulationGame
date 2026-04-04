@@ -12,7 +12,35 @@
 #include "Animals/Sheep.h"
 #include "Animals/Turtle.h"
 
-WorldManager::WorldManager(const int &map_size, const int &organism_count) {
+constexpr int MAX_TRIES = 200;
+
+Position WorldManager::ChooseAndSetSpawnPoint() {
+    const int max_x = static_cast<int>(world_map_[0].size());
+    const int max_y = static_cast<int>(world_map_.size());
+    int max_tries = MAX_TRIES;
+    // (1 --- max_x - 1) <- range of rand so we can do the search with checking neighbors
+
+    while (max_tries--) {
+        const int r_x = 1 + rand() % (max_x - 2);
+        const int r_y = 1 + rand() % (max_y - 2);
+
+        // check random position if its empty
+        if (world_map_[r_y][r_x] == '0') {
+            return Position{r_x, r_y};
+        }
+
+        for (int i = -1; i < 2; i++) {
+            for (int j = -1; j < 2; j++) {
+                if (world_map_[r_y + i][r_x + j] == '0') {
+                    return Position{r_x + j, r_y + i};
+                }
+            }
+        }
+    }
+    return Position{-1, -1};
+}
+
+WorldManager::WorldManager(const int map_size, const int organism_count) {
     std::srand(time(NULL));
     world_map_.reserve(map_size);
     for (int r = 0; r < map_size; r++) {
@@ -24,16 +52,18 @@ WorldManager::WorldManager(const int &map_size, const int &organism_count) {
         // for all 5 subclasses
         const int animal_num = rand() % 5;
 
-        organisms_.push_back(SpawnAnimals(animal_num));
+        Position spawn_pos = ChooseAndSetSpawnPoint();
+
+        if (spawn_pos.x == -1 || spawn_pos.y == -1) {
+            i--;
+            continue;
+        }
+
+        organisms_.push_back(SpawnAnimals(animal_num, spawn_pos));
     }
 }
 
 WorldManager::~WorldManager() {
-
-    for (auto organism : organisms_) {
-        delete organism;
-    }
-
     world_map_.clear();
     world_map_.shrink_to_fit();
 
@@ -50,11 +80,12 @@ void WorldManager::Update() {
 void WorldManager::Render() {
 }
 
-Organism *WorldManager::SpawnAnimals(const uint8_t type) {
+std::unique_ptr<Organism> WorldManager::SpawnAnimals(const uint8_t type, const Position &spawn_pos) {
+
     switch (static_cast<AnimalTypes>(type)) {
         // Wolf
         case AnimalTypes::WOLF: {
-            return new Wolf(world_map_, WOLF::STR, WOLF::INIT);
+            return std::make_unique<Wolf>(world_map_, spawn_pos);
         }
         // case AnimalTypes::SHEEP: {
         //     return new Sheep();

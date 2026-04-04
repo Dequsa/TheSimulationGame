@@ -11,19 +11,27 @@
 #pragma once
 
 class Organism {
-private:
+protected:
+    static uint32_t global_id_counter_;
+    std::vector<std::vector<char> > &world_map_;
     Position pos_{};
-    int str_{};
-    int init_{};
-    std::vector<std::vector<char>> &world_map_;
+    uint32_t id_{};
+    uint8_t str_{};
+    uint8_t init_{};
 
     Position ChooseAndSetSpawnPoint();
 
 public:
+    // Organism(std::vector<std::vector<char> > &world_map, const int &str, const int &init);
 
-    Organism(std::vector<std::vector<char>> &world_map, const int &str, const int &init);
-
-    Organism(std::vector<std::vector<char>> &world_map, const int &str, const int &init, const Position &pos);
+    Organism(std::vector<std::vector<char> > &world_map, const int str, const int init, const Position &pos) :
+                                    world_map_(world_map),
+                                    pos_(pos),
+                                    str_(str),
+                                    init_(init)
+    {
+                                    id_ = global_id_counter_++;
+    }
 
     Organism(const Organism &org) = default;
 
@@ -34,9 +42,9 @@ public:
     // organism getters
     Position GetPosition() const;
 
-    int GetStr();
+    int GetStr() const;
 
-    int GetInit();
+    int GetInit() const;
 };
 
 #endif //C__1_ORGANISM_H

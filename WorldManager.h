@@ -11,11 +11,13 @@
 
 class WorldManager {
 private:
-    std::vector<Organism*> organisms_;
+    std::vector<std::unique_ptr<Organism>> organisms_;
     std::vector<std::vector<char>> world_map_;
 
+    Position ChooseAndSetSpawnPoint();
+
 public:
-    WorldManager(const int &map_size, const int &organism_count);
+    WorldManager(const int map_size, const int organism_count);
 
     ~WorldManager();
 
@@ -23,12 +25,11 @@ public:
 
     void Render();
 
-    Organism *SpawnAnimals(const uint8_t type);
+    std::unique_ptr<Organism> SpawnAnimals(const uint8_t type, const Position &spawn_pos);
 
     void KillOrganism();
 
     const std::vector<std::vector<char>> *GetWorldMap() const { return &world_map_; }
-    const std::vector<Organism> *GetOrganisms() const { return &organisms_; }
 };
 
 
