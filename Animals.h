@@ -8,31 +8,10 @@
 #include "Utils.h"
 #include "Organism.h"
 
-class Animal : public Organism {
-    bool CheckIfMovingPositionIsCorner(const DIRECTIONS dir);
-
-    DIRECTIONS GetMoveDirection();
-
-protected:
-    bool CheckCollision();
-
-    void Move();
-
-    void Collision();
-
-    void Draw();
-
-public:;
-
-    //Animal(std::vector<std::vector<char> > &world_map, const int &str, const int &init);
-
-    Animal(std::vector<std::vector<char> > &world_map, const int str, const int init, const Position &spawn_pos) : Organism(
-        world_map, str, init, spawn_pos) {
-    }
-
-    ~Animal() override = default;
-
-    void Update() override;
+enum class CollisionTypes {
+    EMPTY,
+    SAME_SPECIES,
+    DIFFERENT_SPECIES
 };
 
 enum class AnimalTypes {
@@ -43,5 +22,50 @@ enum class AnimalTypes {
     ANTELOPE // 4
 };
 
+struct AnimalData {
+    const int str;
+    const int init;
+    const char sprite;
+    const AnimalTypes type;
+};
+
+class Animal : public Organism {
+    Position move_;
+
+    bool CheckIfMovingPositionIsCorner(const DIRECTIONS dir) const;
+
+    DIRECTIONS GetMoveDirection() const;
+
+    AnimalTypes GetType() const;
+
+protected:
+    AnimalTypes type_{};
+
+    void Reproduce(Position parent_pos);
+
+    CollisionTypes CheckCollision() const;
+
+    void Move();
+
+    Position SetMovementVector(const DIRECTIONS dir) const;
+
+    void Draw();
+
+public:;
+
+    //Animal(std::vector<std::vector<char> > &world_map, const int &str, const int &init);
+
+    Animal(std::vector<std::vector<char> > &world_map, const AnimalData &data, const Position &spawn_pos) :
+    Organism(world_map, data, spawn_pos),
+        type_(data.type) {
+    }
+
+    ~Animal() override = default;
+
+    void Update(WorldManager &wm) override;
+
+    void Update() override {
+    };
+};
 
 #endif //C__1_ANIMALS_H
