@@ -10,6 +10,7 @@
 
 class Organism;
 struct AnimalData;
+struct UpdateData;
 
 class WorldManager {
 private:

@@ -19,7 +19,8 @@ AnimalTypes Animal::GetType() const {
     }
 }
 
-void Animal::Update() {
+UpdateData Animal::Update() {
+    UpdateData data{AnimalTypes::NONE, {{-1 , -1} , {-1 , -1}}};
     // check collision -> move -> draw
     switch (CheckCollision()) {
         case CollisionTypes::EMPTY: {
@@ -30,17 +31,19 @@ void Animal::Update() {
             // Fight(enemy_pos);
         }
         case CollisionTypes::SAME_SPECIES: {
-            struct data {
-                uint8_t type;
-                Position pos;
-            } data{};
-            const auto type = GetType();
             const auto parent_pos = pos_ + move_;
+
+            data = {type_, {pos_, parent_pos}};
+
+            return data;
         }
         default: {
+            std::cerr << "Unrecognized Collision Type" << '\n';
         }
     }
     Draw();
+    is_child = true;
+    return data;
 }
 
 bool Animal::CheckIfMovingPositionIsCorner(const DIRECTIONS dir) const {
@@ -62,7 +65,7 @@ bool Animal::CheckIfMovingPositionIsCorner(const DIRECTIONS dir) const {
 }
 
 
-void Animal::Reproduce(Position parent_pos) {
+void Animal::Reproduce() {
 }
 
 CollisionTypes Animal::CheckCollision() const {

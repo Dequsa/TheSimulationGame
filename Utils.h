@@ -43,7 +43,8 @@ enum class AnimalTypes {
     SHEEP, // 1
     FOX, // 2
     TURTLE, // 3
-    ANTELOPE // 4
+    ANTELOPE, // 4
+    NONE
 };
 
 struct AnimalData {

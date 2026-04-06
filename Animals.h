@@ -14,8 +14,6 @@ enum class CollisionTypes {
     DIFFERENT_SPECIES
 };
 
-
-
 class WorldManager;
 
 class Animal : public Organism {
@@ -44,14 +42,14 @@ public:;
 
     //Animal(std::vector<std::vector<char> > &world_map, const int &str, const int &init);
 
-    Animal(std::vector<std::vector<char> > &world_map, const AnimalData &data, const Position &spawn_pos) :
-    Organism(world_map, data, spawn_pos),
-        type_(data.type) {
+    Animal(std::vector<std::vector<char> > &world_map, const AnimalData &data,
+           const Position &spawn_pos) : Organism(world_map, data, spawn_pos),
+                                        type_(data.type) {
     }
 
     ~Animal() override = default;
 
-    void Update() override;
+    UpdateData Update() override;
 };
 
 #endif //C__1_ANIMALS_H

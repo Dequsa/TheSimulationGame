@@ -73,7 +73,12 @@ WorldManager::~WorldManager() {
 
 void WorldManager::Update() {
     for (auto &organism: organisms_) {
-        organism->Update();
+        UpdateData data = organism->Update();
+        // if (data.type != AnimalTypes::NONE) {
+        //
+        //     SpawnAnimals(data.type, )
+        // }
+
     }
 }
 

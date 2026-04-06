@@ -8,6 +8,13 @@
 #include <memory>
 #include <vector>
 #include "Utils.h"
+
+// for animals
+struct UpdateData {
+    AnimalTypes type;
+    std::vector<Position> pos;
+};
+
 class Organism {
 protected:
     static uint32_t global_id_counter_;
@@ -17,15 +24,18 @@ protected:
     uint8_t str_{};
     uint8_t init_{};
     uint8_t sprite_{};
+    bool is_child{};
 
 public:
     // Organism(std::vector<std::vector<char> > &world_map, const int &str, const int &init);
 
-    Organism(std::vector<std::vector<char> > &world_map, const AnimalData &data, const Position &pos) : world_map_(world_map),
+    Organism(std::vector<std::vector<char> > &world_map, const AnimalData &data,
+             const Position &pos) : world_map_(world_map),
                                     pos_(pos),
                                     str_(data.str),
                                     init_(data.init),
-                                    sprite_(data.sprite) {
+                                    sprite_(data.sprite),
+                                    is_child(false) {
         id_ = global_id_counter_++;
     }
 
@@ -42,7 +52,7 @@ public:
 
     virtual ~Organism() = default;
 
-    virtual void Update() = 0;
+    virtual UpdateData Update() = 0;
 
     // organism getters
     Position GetPosition() const;
