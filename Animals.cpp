@@ -19,7 +19,7 @@ AnimalTypes Animal::GetType() const {
     }
 }
 
-void Animal::Update(WorldManager &wm) {
+void Animal::Update() {
     // check collision -> move -> draw
     switch (CheckCollision()) {
         case CollisionTypes::EMPTY: {
@@ -30,13 +30,12 @@ void Animal::Update(WorldManager &wm) {
             // Fight(enemy_pos);
         }
         case CollisionTypes::SAME_SPECIES: {
-            const auto type = GetType();
-            const auto parent_pos = pos_ + move_;
             struct data {
                 uint8_t type;
                 Position pos;
             } data{};
-            wm.SpawnAnimals(Reproduce(parent_pos));
+            const auto type = GetType();
+            const auto parent_pos = pos_ + move_;
         }
         default: {
         }
@@ -64,7 +63,6 @@ bool Animal::CheckIfMovingPositionIsCorner(const DIRECTIONS dir) const {
 
 
 void Animal::Reproduce(Position parent_pos) {
-
 }
 
 CollisionTypes Animal::CheckCollision() const {

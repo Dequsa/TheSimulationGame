@@ -4,6 +4,7 @@
 
 #ifndef C__1_PLANTS_H
 #define C__1_PLANTS_H
+#pragma once
 
 
 class Plants {

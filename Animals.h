@@ -14,20 +14,9 @@ enum class CollisionTypes {
     DIFFERENT_SPECIES
 };
 
-enum class AnimalTypes {
-    WOLF, // 0
-    SHEEP, // 1
-    FOX, // 2
-    TURTLE, // 3
-    ANTELOPE // 4
-};
 
-struct AnimalData {
-    const int str;
-    const int init;
-    const char sprite;
-    const AnimalTypes type;
-};
+
+class WorldManager;
 
 class Animal : public Organism {
     Position move_;
@@ -62,10 +51,7 @@ public:;
 
     ~Animal() override = default;
 
-    void Update(WorldManager &wm) override;
-
-    void Update() override {
-    };
+    void Update() override;
 };
 
 #endif //C__1_ANIMALS_H

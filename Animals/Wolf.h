@@ -4,6 +4,7 @@
 
 #ifndef C__1_WOLF_H
 #define C__1_WOLF_H
+#pragma once
 #include "../Animals.h"
 
 

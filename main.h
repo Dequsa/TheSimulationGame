@@ -5,4 +5,6 @@
 #ifndef C__1_MAIN_H
 #define C__1_MAIN_H
 #include <iostream>
+#pragma once
+
 #endif //C__1_MAIN_H

@@ -4,14 +4,10 @@
 
 #ifndef C__1_ORGANISM_H
 #define C__1_ORGANISM_H
+#pragma once
 #include <memory>
 #include <vector>
-
-#include "Animals.h"
 #include "Utils.h"
-#include "WorldManager.h"
-#pragma once
-
 class Organism {
 protected:
     static uint32_t global_id_counter_;
@@ -44,11 +40,9 @@ public:
 
     Organism(const Organism &org) = default;
 
-    virtual ~Organism() = 0;
+    virtual ~Organism() = default;
 
     virtual void Update() = 0;
-
-    virtual void Update(WorldManager &wm) = 0;
 
     // organism getters
     Position GetPosition() const;

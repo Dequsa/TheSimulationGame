@@ -5,9 +5,11 @@
 #ifndef C__1_WORLDMANAGER_H
 #define C__1_WORLDMANAGER_H
 #pragma once
-#include "organism.h"
+#include "Utils.h"
 #include <vector>
 
+class Organism;
+struct AnimalData;
 
 class WorldManager {
 private:
@@ -29,7 +31,7 @@ public:
 
     void KillOrganism();
 
-    const std::vector<std::vector<char>> *GetWorldMap() const { return &world_map_; }
+    std::vector<std::vector<char>> &GetWorldMap() { return world_map_; }
 };
 
 

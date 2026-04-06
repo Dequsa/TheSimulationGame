@@ -4,6 +4,7 @@
 
 #ifndef C__1_UTILS_H
 #define C__1_UTILS_H
+#pragma once
 
 struct Position {
     Position &operator+=(const Position &that) {
@@ -34,6 +35,22 @@ enum class DIRECTIONS {
     BOT_RIGHT,
 
     DIR_COUNT
+};
+
+
+enum class AnimalTypes {
+    WOLF, // 0
+    SHEEP, // 1
+    FOX, // 2
+    TURTLE, // 3
+    ANTELOPE // 4
+};
+
+struct AnimalData {
+    const int str;
+    const int init;
+    const char sprite;
+    const AnimalTypes type;
 };
 
 namespace MapSprites {

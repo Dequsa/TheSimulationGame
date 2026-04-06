@@ -4,6 +4,8 @@
 
 #ifndef C__1_MATRIX_H
 #define C__1_MATRIX_H
+#pragma once
+
 #include "WorldManager.h"
 #include "Animals.h"
 
