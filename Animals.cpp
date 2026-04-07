@@ -4,46 +4,55 @@
 
 #include "Animals.h"
 #include <iostream>
-#include "Animals/Wolf.h"
-constexpr uint8_t MAX_TRIES = 9;
 
 //
 // Animal::Animal(std::vector<std::vector<char> > &world_map, const int &str, const char sprite, const int &init) : Organism(
 //     world_map, str, init, sprite) {
 // };
 
-AnimalTypes Animal::GetType() const {
-    switch (sprite_) {
-        case WOLF::SPRITE:
-            return AnimalTypes::WOLF;
-    }
-}
+// AnimalTypes Animal::GetType() const {
+//     switch (sprite_) {
+//         case WOLF::SPRITE:
+//             return AnimalTypes::WOLF;
+//         default:
+//             throw std::runtime_error("Unknown animal sprite encountered!");
+//             break;
+//     }
+// }
 
 UpdateData Animal::Update() {
-    UpdateData data{AnimalTypes::NONE, {{-1 , -1} , {-1 , -1}}};
+    UpdateData data{InteractionTypes::MOVE,OrganismTypes::NONE, {{-1, -1}, {-1, -1}}};
     // check collision -> move -> draw
     switch (CheckCollision()) {
         case CollisionTypes::EMPTY: {
             Move();
+            break;
         }
         case CollisionTypes::DIFFERENT_SPECIES: {
             const auto enemy_pos = pos_ + move_;
             // Fight(enemy_pos);
+            is_child = true;
+            data = {InteractionTypes::FIGHT,OrganismTypes::NONE, {pos_, enemy_pos}};
+            return data;
         }
         case CollisionTypes::SAME_SPECIES: {
             const auto parent_pos = pos_ + move_;
 
-            data = {type_, {pos_, parent_pos}};
+            data = { InteractionTypes::REPRODUCE ,type_ , {pos_, parent_pos}};
 
             return data;
         }
         default: {
             std::cerr << "Unrecognized Collision Type" << '\n';
+            break;
         }
     }
-    Draw();
     is_child = true;
     return data;
+}
+
+void Animal::Render() {
+    world_map_[pos_.y][pos_.x] = sprite_;
 }
 
 bool Animal::CheckIfMovingPositionIsCorner(const DIRECTIONS dir) const {
@@ -64,13 +73,9 @@ bool Animal::CheckIfMovingPositionIsCorner(const DIRECTIONS dir) const {
     return hit_x_edge || hit_y_edge;
 }
 
-
-void Animal::Reproduce() {
-}
-
 CollisionTypes Animal::CheckCollision() const {
-    const auto check_pos = pos_ + move_;
-    const char sprite_on_map = world_map_[check_pos.x][check_pos.y];
+    const auto [x, y] = pos_ + move_;
+    const char sprite_on_map = world_map_[y][x];
 
     if (sprite_on_map == sprite_) {
         return CollisionTypes::SAME_SPECIES;
@@ -84,6 +89,8 @@ CollisionTypes Animal::CheckCollision() const {
 }
 
 void Animal::Move() {
+    //TODO ADD REPLACING CURRENT TILE WITH #
+
     const auto dir = GetMoveDirection();
     move_ = SetMovementVector(dir);
     pos_ += move_;
@@ -112,33 +119,42 @@ Position Animal::SetMovementVector(const DIRECTIONS dir) const {
         case DIRECTIONS::UP_LEFT: {
             move.x -= 1;
             move.y -= 1;
+            break;
         }
         case DIRECTIONS::UP_MID: {
             move.y -= 1;
+            break;
         }
         case DIRECTIONS::UP_RIGHT: {
             move.x += 1;
             move.y -= 1;
+            break;
         }
         case DIRECTIONS::MID_LEFT: {
             move.x -= 1;
+            break;
         }
         case DIRECTIONS::MID_MID: {
             // STAY ON THE BLOCK
+            break;
         }
         case DIRECTIONS::MID_RIGHT: {
             move.x += 1;
+            break;
         }
         case DIRECTIONS::BOT_LEFT: {
             move.x -= 1;
             move.y += 1;
+            break;
         }
         case DIRECTIONS::BOT_MID: {
             move.y += 1;
+            break;
         }
         case DIRECTIONS::BOT_RIGHT: {
             move.x += 1;
             move.y += 1;
+            break;
         }
         default: {
             std::cerr << "Error while trying to set movement vector for animal id: " << id_ << '\n';
@@ -146,7 +162,4 @@ Position Animal::SetMovementVector(const DIRECTIONS dir) const {
 
             return move;
     }
-}
-
-void Animal::Draw() {
 }

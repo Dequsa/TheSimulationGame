@@ -15,16 +15,17 @@ namespace WOLF {
 }
 
 class Wolf final : public Animal {
-    AnimalData wolf_data_ = {
+    static constexpr AnimalData wolf_data_ = {
         WOLF::STR,
         WOLF::INIT,
-        WOLF::SPRITE
+        WOLF::SPRITE,
+        OrganismTypes::WOLF
     };
 
 public:
     Wolf(std::vector<std::vector<char> > &world_map, const Position &spawn_pos) : Animal(
         world_map, wolf_data_, spawn_pos) {
-    };
+    }
 
     ~Wolf() override = default;
 };

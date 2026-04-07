@@ -13,11 +13,12 @@ struct AnimalData;
 struct UpdateData;
 
 class WorldManager {
-private:
     std::vector<std::unique_ptr<Organism>> organisms_;
     std::vector<std::vector<char>> world_map_;
 
-    Position ChooseAndSetSpawnPoint();
+    Position ChooseAndSetSpawnPoint() const;
+
+    void Render();
 
 public:
     WorldManager(const int map_size, const int organism_count);
@@ -26,9 +27,7 @@ public:
 
     void Update();
 
-    void Render();
-
-    std::unique_ptr<Organism> SpawnAnimals(const uint8_t type, const Position &spawn_pos);
+    std::unique_ptr<Organism> SpawnAnimals(const OrganismTypes type, const Position &spawn_pos);
 
     void KillOrganism();
 

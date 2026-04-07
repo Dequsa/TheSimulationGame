@@ -23,12 +23,10 @@ class Animal : public Organism {
 
     DIRECTIONS GetMoveDirection() const;
 
-    AnimalTypes GetType() const;
-
 protected:
-    AnimalTypes type_{};
+    OrganismTypes type_{};
 
-    void Reproduce(Position parent_pos);
+    OrganismTypes GetType() const { return type_; }
 
     CollisionTypes CheckCollision() const;
 
@@ -36,7 +34,6 @@ protected:
 
     Position SetMovementVector(const DIRECTIONS dir) const;
 
-    void Draw();
 
 public:;
 
@@ -50,6 +47,8 @@ public:;
     ~Animal() override = default;
 
     UpdateData Update() override;
+
+    void Render() override;
 };
 
 #endif //C__1_ANIMALS_H

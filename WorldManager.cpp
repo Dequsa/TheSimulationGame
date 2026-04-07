@@ -14,7 +14,7 @@
 
 constexpr int MAX_TRIES = 200;
 
-Position WorldManager::ChooseAndSetSpawnPoint() {
+Position WorldManager::ChooseAndSetSpawnPoint() const {
     const int max_x = static_cast<int>(world_map_[0].size());
     const int max_y = static_cast<int>(world_map_.size());
     int max_tries = MAX_TRIES;
@@ -25,7 +25,7 @@ Position WorldManager::ChooseAndSetSpawnPoint() {
         const int r_y = 1 + rand() % (max_y - 2);
 
         // check random position if its empty
-        if (world_map_[r_y][r_x] == '0') {
+        if (world_map_[r_y][r_x] == MapSprites::EMPTY) {
             return Position{r_x, r_y};
         }
 
@@ -40,17 +40,12 @@ Position WorldManager::ChooseAndSetSpawnPoint() {
     return Position{-1, -1};
 }
 
-WorldManager::WorldManager(const int map_size, const int organism_count) {
+WorldManager::WorldManager(const int map_size, const int organism_count) : world_map_(map_size, std::vector<char>(map_size, '#')) {
     std::srand(time(NULL));
-    world_map_.reserve(map_size);
-    for (int r = 0; r < map_size; r++) {
-        world_map_[r].reserve(map_size);
-    }
-
     // add organisms to the world_map
     for (int i = 0; i < organism_count; i++) {
         // for all 5 subclasses
-        const int animal_num = rand() % 5;
+        // const int animal_num = rand() % static_cast<int>(OrganismTypes::NONE);
 
         Position spawn_pos = ChooseAndSetSpawnPoint();
 
@@ -59,7 +54,8 @@ WorldManager::WorldManager(const int map_size, const int organism_count) {
             continue;
         }
 
-        organisms_.push_back(SpawnAnimals(animal_num, spawn_pos));
+        auto animal_num = static_cast<int>(OrganismTypes::WOLF);
+        organisms_.push_back(SpawnAnimals(static_cast<OrganismTypes>(animal_num), spawn_pos));
     }
 }
 
@@ -72,24 +68,48 @@ WorldManager::~WorldManager() {
 }
 
 void WorldManager::Update() {
-    for (auto &organism: organisms_) {
-        UpdateData data = organism->Update();
-        // if (data.type != AnimalTypes::NONE) {
-        //
-        //     SpawnAnimals(data.type, )
-        // }
-
+    std::cout << "Before update:\n";
+    Render();
+    std::cout << std::endl;
+    for (const auto &organism: organisms_) {
+        auto [interaction,type, pos] = organism->Update();
+        switch (interaction) {
+            case InteractionTypes::FIGHT:
+                break;
+            case InteractionTypes::MOVE:
+                break;
+            case InteractionTypes::REPRODUCE:
+                break;
+        }
     }
+    std::cout << "After update:\n";
+    Render();
 }
 
 void WorldManager::Render() {
+    // clear whole plane
+    for (auto &row : world_map_) {
+        for (auto &tile : row) {
+            tile = '#';
+        }
+    }
+    // paint the rest with all the orgs draw funcs
+    for (const auto &organism : organisms_ ) {
+        organism->Render();
+    }
+    for (const auto& row : world_map_) {
+        for (const auto tile : row) {
+            std::cout << tile;
+        }
+        std::cout << std::endl;
+    }
 }
 
-std::unique_ptr<Organism> WorldManager::SpawnAnimals(const uint8_t type, const Position &spawn_pos) {
+std::unique_ptr<Organism> WorldManager::SpawnAnimals(const OrganismTypes type, const Position &spawn_pos) {
 
-    switch (static_cast<AnimalTypes>(type)) {
+    switch (static_cast<OrganismTypes>(type)) {
         // Wolf
-        case AnimalTypes::WOLF: {
+        case OrganismTypes::WOLF: {
             return std::make_unique<Wolf>(world_map_, spawn_pos);
         }
         // case AnimalTypes::SHEEP: {

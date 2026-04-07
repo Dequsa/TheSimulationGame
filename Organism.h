@@ -11,7 +11,8 @@
 
 // for animals
 struct UpdateData {
-    AnimalTypes type;
+    InteractionTypes interaction;
+    OrganismTypes type;
     std::vector<Position> pos;
 };
 
@@ -23,8 +24,8 @@ protected:
     uint32_t id_{};
     uint8_t str_{};
     uint8_t init_{};
-    uint8_t sprite_{};
-    bool is_child{};
+    char sprite_{};
+    bool is_child = false;
 
 public:
     // Organism(std::vector<std::vector<char> > &world_map, const int &str, const int &init);
@@ -34,8 +35,7 @@ public:
                                     pos_(pos),
                                     str_(data.str),
                                     init_(data.init),
-                                    sprite_(data.sprite),
-                                    is_child(false) {
+                                    sprite_(data.sprite) {
         id_ = global_id_counter_++;
     }
 
@@ -60,6 +60,8 @@ public:
     int GetStr() const;
 
     int GetInit() const;
+
+    virtual void Render() = 0;
 };
 
 #endif //C__1_ORGANISM_H

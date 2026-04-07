@@ -37,21 +37,27 @@ enum class DIRECTIONS {
     DIR_COUNT
 };
 
-
-enum class AnimalTypes {
+enum class OrganismTypes {
     WOLF, // 0
     SHEEP, // 1
     FOX, // 2
     TURTLE, // 3
     ANTELOPE, // 4
-    NONE
+
+    NONE    // can be also used as count of types
+};
+
+enum class InteractionTypes {
+    FIGHT,
+    REPRODUCE,
+    MOVE
 };
 
 struct AnimalData {
     const int str;
     const int init;
     const char sprite;
-    const AnimalTypes type;
+    const OrganismTypes type;
 };
 
 namespace MapSprites {
