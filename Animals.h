@@ -37,8 +37,7 @@ public:;
     //Animal(std::vector<std::vector<char> > &world_map, const int &str, const int &init);
 
     Animal(std::vector<std::vector<char> > &world_map, const AnimalData &data,
-           const Position &spawn_pos) : Organism(world_map, data, spawn_pos),
-                                        type_(data.type) {
+           const Position &spawn_pos) : Organism(world_map, data, spawn_pos){
     }
 
     ~Animal() override = default;

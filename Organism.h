@@ -32,7 +32,8 @@ public:
                                     pos_(pos),
                                     str_(data.str),
                                     init_(data.init),
-                                    sprite_(data.sprite) {
+                                    sprite_(data.sprite),
+                                    type_(data.type) {
         id_ = global_id_counter_++;
     }
 

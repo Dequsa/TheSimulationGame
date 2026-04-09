@@ -20,7 +20,7 @@ class WorldManager {
     Position GetChildSpawnPosition(const std::vector<Position> &positions) const;
     void CreateFight(const std::vector<Position> &positions);
     void Reproduce(const std::vector<Position> &positions, OrganismTypes parent_race);
-
+    void SortOrganisms();
     void Render();
 
 public:
@@ -30,7 +30,7 @@ public:
 
     void Update();
 
-    std::unique_ptr<Organism> SpawnAnimals(const OrganismTypes type, const Position &spawn_pos);
+    void SpawnAnimals(const OrganismTypes type, const Position &spawn_pos);
 
     void KillOrganism();
 

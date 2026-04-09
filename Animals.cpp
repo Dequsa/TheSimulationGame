@@ -190,7 +190,6 @@ Position Animal::SetMovementVector(const DIRECTIONS dir) const {
         default: {
             std::cerr << "Error while trying to set movement vector for animal id: " << id_ << '\n';
         }
-
-            return move;
     }
+    return move;
 }

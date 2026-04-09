@@ -31,13 +31,20 @@ Position WorldManager::ChooseAndSetSpawnPoint() const {
 
         for (int i = -1; i < 2; i++) {
             for (int j = -1; j < 2; j++) {
-                if (world_map_[r_y + i][r_x + j] == '0') {
+                if (world_map_[r_y + i][r_x + j] == MapSprites::EMPTY) {
                     return Position{r_x + j, r_y + i};
                 }
             }
         }
     }
     return Position{-1, -1};
+}
+
+void WorldManager::SortOrganisms() {
+    std::sort(organisms_.begin(), organisms_.end(),
+              [](const std::unique_ptr<Organism> &a, const std::unique_ptr<Organism> &b) {
+                  return a->GetInit() > b->GetInit();
+              });
 }
 
 Position WorldManager::GetChildSpawnPosition(const std::vector<Position> &positions) const {
@@ -55,12 +62,12 @@ Position WorldManager::GetChildSpawnPosition(const std::vector<Position> &positi
 }
 
 void WorldManager::CreateFight(const std::vector<Position> &positions) {
-
+    //TODO DO THIS
 }
 
 void WorldManager::Reproduce(const std::vector<Position> &positions, OrganismTypes parent_race) {
     const auto c_pos = GetChildSpawnPosition(positions);
-    organisms_.push_back(SpawnAnimals(parent_race, c_pos));
+    SpawnAnimals(parent_race, c_pos);
 }
 
 WorldManager::WorldManager(const int map_size, const int organism_count) : world_map_(
@@ -79,7 +86,7 @@ WorldManager::WorldManager(const int map_size, const int organism_count) : world
         }
 
         auto animal_num = static_cast<int>(OrganismTypes::WOLF);
-        organisms_.push_back(SpawnAnimals(static_cast<OrganismTypes>(animal_num), spawn_pos));
+        SpawnAnimals(static_cast<OrganismTypes>(animal_num), spawn_pos);
     }
 }
 
@@ -132,11 +139,12 @@ void WorldManager::Render() {
     }
 }
 
-std::unique_ptr<Organism> WorldManager::SpawnAnimals(const OrganismTypes type, const Position &spawn_pos) {
-    switch (static_cast<OrganismTypes>(type)) {
+void WorldManager::SpawnAnimals(const OrganismTypes type, const Position &spawn_pos) {
+    std::unique_ptr<Organism> temp;
+    switch (type) {
         // Wolf
         case OrganismTypes::WOLF: {
-            return std::make_unique<Wolf>(world_map_, spawn_pos);
+            temp = std::make_unique<Wolf>(world_map_, spawn_pos);
         }
         // case AnimalTypes::SHEEP: {
         //     return new Sheep();
@@ -153,7 +161,10 @@ std::unique_ptr<Organism> WorldManager::SpawnAnimals(const OrganismTypes type, c
             std::cerr << "Unknown AnimalType" << std::endl;
         }
     }
-    return nullptr;
+    if (temp) {
+        organisms_.push_back(std::move(temp));
+        SortOrganisms();
+    }
 }
 
 void WorldManager::KillOrganism() {
