@@ -54,7 +54,8 @@ enum class OrganismTypes {
 enum class InteractionTypes {
     FIGHT,
     REPRODUCE,
-    MOVE
+    MOVE,
+    NONE
 };
 
 struct AnimalData {

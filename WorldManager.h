@@ -7,6 +7,7 @@
 #pragma once
 #include "Utils.h"
 #include <vector>
+#include <memory>
 
 class Organism;
 struct AnimalData;
@@ -19,7 +20,6 @@ class WorldManager {
     Position ChooseAndSetSpawnPoint() const;
     Position GetChildSpawnPosition(const std::vector<Position> &positions) const;
     void CreateFight(const std::vector<Position> &positions);
-    void Reproduce(const std::vector<Position> &positions, OrganismTypes parent_race);
     void SortOrganisms();
     void Render();
 
@@ -30,7 +30,7 @@ public:
 
     void Update();
 
-    void SpawnAnimals(const OrganismTypes type, const Position &spawn_pos);
+    std::unique_ptr<Organism> SpawnAnimals(const OrganismTypes type, const Position &spawn_pos);
 
     void KillOrganism();
 

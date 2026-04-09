@@ -11,7 +11,8 @@
 enum class CollisionTypes {
     EMPTY,
     SAME_SPECIES,
-    DIFFERENT_SPECIES
+    DIFFERENT_SPECIES,
+    STAY
 };
 
 class WorldManager;
@@ -26,7 +27,7 @@ class Animal : public Organism {
 protected:
     OrganismTypes GetType() const { return type_; }
 
-    CollisionTypes CheckCollision() const;
+    InteractionTypes CheckCollision() const;
 
     void Move();
 

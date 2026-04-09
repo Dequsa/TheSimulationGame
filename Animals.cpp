@@ -5,74 +5,31 @@
 #include "Animals.h"
 #include <iostream>
 
-//
-// Animal::Animal(std::vector<std::vector<char> > &world_map, const int &str, const char sprite, const int &init) : Organism(
-//     world_map, str, init, sprite) {
-// };
-
-// AnimalTypes Animal::GetType() const {
-//     switch (sprite_) {
-//         case WOLF::SPRITE:
-//             return AnimalTypes::WOLF;
-//         default:
-//             throw std::runtime_error("Unknown animal sprite encountered!");
-//             break;
-//     }
-// }
-
-// Animal *Animal::Update() {
-//     UpdateData data{InteractionTypes::MOVE,OrganismTypes::NONE, {{-1, -1}, {-1, -1}}};
-//     const auto dir = GetMoveDirection();
-//     move_ = SetMovementVector(dir);
-//
-//     switch (CheckCollision()) {
-//         case CollisionTypes::EMPTY: {
-//             Move();
-//             break;
-//         }
-//         case CollisionTypes::DIFFERENT_SPECIES: {
-//             const auto enemy_pos = pos_ + move_;
-//             // Fight(enemy_pos);
-//             data = {InteractionTypes::FIGHT,OrganismTypes::NONE, {pos_, enemy_pos}};
-//             return this;
-//         }
-//         case CollisionTypes::SAME_SPECIES: {
-//             const auto parent_pos = pos_ + move_;
-//
-//             data = { InteractionTypes::REPRODUCE ,type_ , {pos_, parent_pos}};
-//             is_child = true;
-//             return data;
-//         }
-//         default: {
-//             std::cerr << "Unrecognized Collision Type" << '\n';
-//             break;
-//         }
-//     }
-//     is_child = false;
-//     return data;
-// }
-
 UpdateData Animal::Update() {
     UpdateData data{InteractionTypes::MOVE,nullptr, {{-1, -1}, {-1, -1}}};
     const auto dir = GetMoveDirection();
     move_ = SetMovementVector(dir);
 
     switch (CheckCollision()) {
-        case CollisionTypes::EMPTY: {
+        case InteractionTypes::MOVE: {
             Move();
             break;
         }
-        case CollisionTypes::DIFFERENT_SPECIES: {
+        case InteractionTypes::FIGHT: {
             const auto enemy_pos = pos_ + move_;
             // Fight(enemy_pos);
             data = {InteractionTypes::FIGHT,this, {pos_, enemy_pos}};
             return data;
         }
-        case CollisionTypes::SAME_SPECIES: {
+        case InteractionTypes::REPRODUCE: {
             const auto parent_pos = pos_ + move_;
 
             data = { InteractionTypes::REPRODUCE ,this , {pos_, parent_pos}};
             is_child = true;
+            return data;
+        }
+        case InteractionTypes::NONE: {
+            data.interaction = InteractionTypes::MOVE;
             return data;
         }
         default: {
@@ -107,19 +64,25 @@ bool Animal::CheckIfMovingPositionIsCorner(const DIRECTIONS dir) const {
     return hit_x_edge || hit_y_edge;
 }
 
-CollisionTypes Animal::CheckCollision() const {
+InteractionTypes Animal::CheckCollision() const {
     const auto [x, y] = pos_ + move_;
+
+    if (x == -1 || y == -1) {
+        // they dont actually move they just dont do anything updatey
+        return InteractionTypes::NONE;
+    }
+
     const char sprite_on_map = world_map_[y][x];
 
     if (sprite_on_map == sprite_) {
-        return CollisionTypes::SAME_SPECIES;
+        return InteractionTypes::REPRODUCE;
     }
 
     if (sprite_on_map == MapSprites::EMPTY) {
-        return CollisionTypes::EMPTY;
+        return InteractionTypes::MOVE;
     }
 
-    return CollisionTypes::DIFFERENT_SPECIES;
+    return InteractionTypes::FIGHT;
 }
 
 void Animal::Move() {
