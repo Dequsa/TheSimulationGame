@@ -20,9 +20,43 @@
 //     }
 // }
 
+// Animal *Animal::Update() {
+//     UpdateData data{InteractionTypes::MOVE,OrganismTypes::NONE, {{-1, -1}, {-1, -1}}};
+//     const auto dir = GetMoveDirection();
+//     move_ = SetMovementVector(dir);
+//
+//     switch (CheckCollision()) {
+//         case CollisionTypes::EMPTY: {
+//             Move();
+//             break;
+//         }
+//         case CollisionTypes::DIFFERENT_SPECIES: {
+//             const auto enemy_pos = pos_ + move_;
+//             // Fight(enemy_pos);
+//             data = {InteractionTypes::FIGHT,OrganismTypes::NONE, {pos_, enemy_pos}};
+//             return this;
+//         }
+//         case CollisionTypes::SAME_SPECIES: {
+//             const auto parent_pos = pos_ + move_;
+//
+//             data = { InteractionTypes::REPRODUCE ,type_ , {pos_, parent_pos}};
+//             is_child = true;
+//             return data;
+//         }
+//         default: {
+//             std::cerr << "Unrecognized Collision Type" << '\n';
+//             break;
+//         }
+//     }
+//     is_child = false;
+//     return data;
+// }
+
 UpdateData Animal::Update() {
-    UpdateData data{InteractionTypes::MOVE,OrganismTypes::NONE, {{-1, -1}, {-1, -1}}};
-    // check collision -> move -> draw
+    UpdateData data{InteractionTypes::MOVE,nullptr, {{-1, -1}, {-1, -1}}};
+    const auto dir = GetMoveDirection();
+    move_ = SetMovementVector(dir);
+
     switch (CheckCollision()) {
         case CollisionTypes::EMPTY: {
             Move();
@@ -31,15 +65,14 @@ UpdateData Animal::Update() {
         case CollisionTypes::DIFFERENT_SPECIES: {
             const auto enemy_pos = pos_ + move_;
             // Fight(enemy_pos);
-            is_child = true;
-            data = {InteractionTypes::FIGHT,OrganismTypes::NONE, {pos_, enemy_pos}};
+            data = {InteractionTypes::FIGHT,this, {pos_, enemy_pos}};
             return data;
         }
         case CollisionTypes::SAME_SPECIES: {
             const auto parent_pos = pos_ + move_;
 
-            data = { InteractionTypes::REPRODUCE ,type_ , {pos_, parent_pos}};
-
+            data = { InteractionTypes::REPRODUCE ,this , {pos_, parent_pos}};
+            is_child = true;
             return data;
         }
         default: {
@@ -47,9 +80,10 @@ UpdateData Animal::Update() {
             break;
         }
     }
-    is_child = true;
+    is_child = false;
     return data;
 }
+
 
 void Animal::Render() {
     world_map_[pos_.y][pos_.x] = sprite_;
@@ -90,9 +124,6 @@ CollisionTypes Animal::CheckCollision() const {
 
 void Animal::Move() {
     //TODO ADD REPLACING CURRENT TILE WITH #
-
-    const auto dir = GetMoveDirection();
-    move_ = SetMovementVector(dir);
     pos_ += move_;
 }
 

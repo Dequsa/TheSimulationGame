@@ -17,6 +17,9 @@ class WorldManager {
     std::vector<std::vector<char>> world_map_;
 
     Position ChooseAndSetSpawnPoint() const;
+    Position GetChildSpawnPosition(const std::vector<Position> &positions) const;
+    void CreateFight(const std::vector<Position> &positions);
+    void Reproduce(const std::vector<Position> &positions, OrganismTypes parent_race);
 
     void Render();
 

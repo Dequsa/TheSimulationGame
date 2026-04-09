@@ -10,11 +10,7 @@
 #include "Utils.h"
 
 // for animals
-struct UpdateData {
-    InteractionTypes interaction;
-    OrganismTypes type;
-    std::vector<Position> pos;
-};
+struct UpdateData;
 
 class Organism {
 protected:
@@ -26,6 +22,7 @@ protected:
     uint8_t init_{};
     char sprite_{};
     bool is_child = false;
+    OrganismTypes type_{};
 
 public:
     // Organism(std::vector<std::vector<char> > &world_map, const int &str, const int &init);
@@ -61,7 +58,15 @@ public:
 
     int GetInit() const;
 
+    OrganismTypes GetType() const;
+
     virtual void Render() = 0;
+};
+
+struct UpdateData {
+    InteractionTypes interaction;
+    Organism *org;
+    std::vector<Position> pos;
 };
 
 #endif //C__1_ORGANISM_H

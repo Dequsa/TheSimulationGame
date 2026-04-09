@@ -22,3 +22,7 @@ int Organism::GetStr() const {
 int Organism::GetInit() const {
     return init_;
 }
+
+OrganismTypes Organism::GetType() const {
+    return type_;
+}

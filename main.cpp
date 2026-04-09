@@ -6,8 +6,8 @@
 #include "Animals/Wolf.h"
 
 int main() {
-    WorldManager wm(5, 1);
-    wm.SpawnAnimals(OrganismTypes::WOLF, {0, 0});
+    WorldManager wm(5, 2);
+    wm.Update();
     wm.Update();
     return 0;
 }

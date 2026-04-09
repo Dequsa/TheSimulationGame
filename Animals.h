@@ -24,8 +24,6 @@ class Animal : public Organism {
     DIRECTIONS GetMoveDirection() const;
 
 protected:
-    OrganismTypes type_{};
-
     OrganismTypes GetType() const { return type_; }
 
     CollisionTypes CheckCollision() const;
@@ -33,7 +31,6 @@ protected:
     void Move();
 
     Position SetMovementVector(const DIRECTIONS dir) const;
-
 
 public:;
 

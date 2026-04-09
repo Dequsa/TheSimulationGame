@@ -40,7 +40,31 @@ Position WorldManager::ChooseAndSetSpawnPoint() const {
     return Position{-1, -1};
 }
 
-WorldManager::WorldManager(const int map_size, const int organism_count) : world_map_(map_size, std::vector<char>(map_size, '#')) {
+Position WorldManager::GetChildSpawnPosition(const std::vector<Position> &positions) const {
+    for (const auto [x, y]: positions) {
+        for (int k = -1; k < 2; k++) {
+            for (int i = -1; i < 2; i++) {
+                const Position c_pos = {k + x, i + y};
+                if (world_map_[c_pos.x][c_pos.y] == '#') {
+                    return c_pos;
+                }
+            }
+        }
+    }
+    return {-1, -1};
+}
+
+void WorldManager::CreateFight(const std::vector<Position> &positions) {
+
+}
+
+void WorldManager::Reproduce(const std::vector<Position> &positions, OrganismTypes parent_race) {
+    const auto c_pos = GetChildSpawnPosition(positions);
+    organisms_.push_back(SpawnAnimals(parent_race, c_pos));
+}
+
+WorldManager::WorldManager(const int map_size, const int organism_count) : world_map_(
+    map_size, std::vector<char>(map_size, '#')) {
     std::srand(time(NULL));
     // add organisms to the world_map
     for (int i = 0; i < organism_count; i++) {
@@ -72,13 +96,15 @@ void WorldManager::Update() {
     Render();
     std::cout << std::endl;
     for (const auto &organism: organisms_) {
-        auto [interaction,type, pos] = organism->Update();
+        auto [interaction,org, pos] = organism->Update();
         switch (interaction) {
             case InteractionTypes::FIGHT:
+                CreateFight(pos);
                 break;
             case InteractionTypes::MOVE:
                 break;
             case InteractionTypes::REPRODUCE:
+                Reproduce(pos, org->GetType());
                 break;
         }
     }
@@ -88,25 +114,25 @@ void WorldManager::Update() {
 
 void WorldManager::Render() {
     // clear whole plane
-    for (auto &row : world_map_) {
-        for (auto &tile : row) {
+    for (auto &row: world_map_) {
+        for (auto &tile: row) {
             tile = '#';
         }
     }
     // paint the rest with all the orgs draw funcs
-    for (const auto &organism : organisms_ ) {
+    for (const auto &organism: organisms_) {
         organism->Render();
     }
-    for (const auto& row : world_map_) {
-        for (const auto tile : row) {
-            std::cout << tile;
+    for (const auto &row: world_map_) {
+        std::cout << " | ";
+        for (const auto tile: row) {
+            std::cout << tile << " | ";
         }
         std::cout << std::endl;
     }
 }
 
 std::unique_ptr<Organism> WorldManager::SpawnAnimals(const OrganismTypes type, const Position &spawn_pos) {
-
     switch (static_cast<OrganismTypes>(type)) {
         // Wolf
         case OrganismTypes::WOLF: {

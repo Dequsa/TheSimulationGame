@@ -19,6 +19,10 @@ struct Position {
         return res;
     }
 
+    bool operator==(const Position& that) const {
+        return this->x == that.x && this->y == that.y;
+    }
+
     int x;
     int y;
 };
