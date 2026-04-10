@@ -50,11 +50,6 @@ UpdateData Animal::Update() {
     return data;
 }
 
-
-void Animal::Render() {
-    world_map_[pos_.y][pos_.x] = sprite_;
-}
-
 bool Animal::CheckIfMovingPositionIsCorner(const DIRECTIONS dir) const {
     const int max_x = world_map_.size() - 1;
     const int max_y = world_map_[0].size() - 1;
@@ -95,8 +90,9 @@ InteractionTypes Animal::CheckCollision() const {
 }
 
 void Animal::Move() {
-    //TODO ADD REPLACING CURRENT TILE WITH #
+    world_map_[pos_.y][pos_.x] = MapSprites::EMPTY;
     pos_ += move_;
+    world_map_[pos_.y][pos_.x] = sprite_;
 }
 
 DIRECTIONS Animal::GetMoveDirection() const {

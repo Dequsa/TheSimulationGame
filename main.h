@@ -4,7 +4,12 @@
 
 #ifndef C__1_MAIN_H
 #define C__1_MAIN_H
-#include <iostream>
 #pragma once
+#include <iostream>
+#include "Organism.h"
+#include "Animals.h"
+#include "WorldManager.h"
+#include "Animals/Wolf.h"
+
 
 #endif //C__1_MAIN_H

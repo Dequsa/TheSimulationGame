@@ -67,8 +67,6 @@ public:
     void SetChild( const bool what) {
         child_ = what;
     }
-
-    virtual void Render() = 0;
 };
 
 struct UpdateData {

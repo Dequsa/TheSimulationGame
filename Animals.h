@@ -44,8 +44,6 @@ public:;
     ~Animal() override = default;
 
     UpdateData Update() override;
-
-    void Render() override;
 };
 
 #endif //C__1_ANIMALS_H

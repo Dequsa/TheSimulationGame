@@ -16,7 +16,7 @@
 constexpr int MAX_TRIES = 200;
 
 WorldManager::WorldManager(const int map_size, const int organism_count) : world_map_(
-    map_size, std::vector<char>(map_size, '#')) {
+    map_size, std::vector<char>(map_size, MapSprites::EMPTY)) {
     std::srand(time(NULL));
     // add organisms to the world_map
     for (int i = 0; i < organism_count; i++) {
@@ -30,9 +30,10 @@ WorldManager::WorldManager(const int map_size, const int organism_count) : world
             continue;
         }
 
-        auto animal_num = static_cast<int>(OrganismTypes::WOLF);
+        auto animal_num = static_cast<int>(OrganismTypes::SHEEP);
+        // auto animal_num = rand() % static_cast<int>(OrganismTypes::SHEEP);
         organisms_.push_back(SpawnAnimals(static_cast<OrganismTypes>(animal_num), spawn_pos));
-    }
+    }`
 }
 
 WorldManager::~WorldManager() {
@@ -53,14 +54,23 @@ void WorldManager::SortOrganisms() {
 
 std::vector<int> WorldManager::GetOrganismIdsAtPositions(const std::vector<Position>& positions) const {
     std::vector<int> ids;
-    for (int i = 0; i < organisms_.size(); i++) {
-        for (const auto& pos : positions) {
-            if (organisms_[i]->GetPosition() == pos) {
-                ids.push_back(i);
-                break;
+    // for (int i = 0; i < organisms_.size(); i++) {
+    //     for (const auto& pos : positions) {
+    //         if (organisms_[i]->GetPosition() == pos) {
+    //             ids.push_back(i);
+    //             break;
+    //         }
+    //     }
+    // }
+    for (const auto target_pos : positions) {
+        for (int i = 0; i < organisms_.size(); i++) {
+            if ( organisms_[i]->GetPosition() == target_pos) {
+                if (std::find(ids.begin(), ids.end(), i) == ids.end()) {
+                    ids.push_back(i);
+                    break;
+                }
             }
         }
-        if (ids.size() == positions.size()) break;
     }
     return ids;
 }
@@ -134,7 +144,7 @@ int WorldManager::CreateFight(const std::vector<Position> &positions) {
     return looser_id;
 }
 
-std::unique_ptr<Organism> WorldManager::CreateBaby(const std::vector<Position> &positions, OrganismTypes parent_race) {
+std::unique_ptr<Organism> WorldManager::CreateBaby(const std::vector<Position> &positions, const OrganismTypes parent_race) {
     std::vector<std::unique_ptr<Organism> > new_babies;
     const auto c_pos = GetChildSpawnPosition(positions);
     auto child = SpawnAnimals(parent_race, c_pos);
@@ -203,16 +213,6 @@ void WorldManager::Update() {
 }
 
 void WorldManager::Render() {
-    // clear whole plane
-    for (auto &row: world_map_) {
-        for (auto &tile: row) {
-            tile = '#';
-        }
-    }
-    // paint the rest with all the orgs draw funcs
-    for (const auto &organism: organisms_) {
-        organism->Render();
-    }
     for (const auto &row: world_map_) {
         std::cout << " | ";
         for (const auto tile: row) {
@@ -229,8 +229,9 @@ std::unique_ptr<Organism> WorldManager::SpawnAnimals(const OrganismTypes type, c
         case OrganismTypes::WOLF: {
             return std::make_unique<Wolf>(world_map_, spawn_pos);
         }
-        // case AnimalTypes::SHEEP: {
-        //     return new Sheep();
+        case OrganismTypes::SHEEP: {
+            return std::make_unique<Sheep>(world_map_, spawn_pos);
+        }
         // case AnimalTypes::FOX: {
         //     return new Fox();
         // }
