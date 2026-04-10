@@ -23,8 +23,6 @@ class WorldManager {
     int CreateFight(const std::vector<Position> &positions);
     std::unique_ptr<Organism> CreateBaby(const std::vector<Position> &positions, OrganismTypes parent_race);
     void SortOrganisms();
-    void Render();
-
 public:
     WorldManager(const int map_size, const int organism_count);
 
@@ -35,6 +33,8 @@ public:
     std::unique_ptr<Organism> SpawnAnimals(const OrganismTypes type, const Position &spawn_pos);
 
     void KillOrganism();
+
+    void Render();
 
     std::vector<std::vector<char>> &GetWorldMap() { return world_map_; }
 };

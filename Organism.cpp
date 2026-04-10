@@ -30,3 +30,19 @@ OrganismTypes Organism::GetType() const {
 bool Organism::IsChild() const {
     return child_;
 }
+
+void Organism::SetChild(const bool what) {
+    child_ = what;
+}
+
+void Organism::SetActive(const bool what) {
+    has_acted_ = what;
+}
+
+bool Organism::GetActivity() const {
+    return has_acted_;
+}
+
+int Organism::GetAge() const {
+    return age_;
+}

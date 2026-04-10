@@ -1,7 +1,17 @@
 #include "main.h"
 
 int main() {
-    WorldManager wm(5, 2);
+    int map_size = 1, org_num = 1;
+    std::cin >> map_size >> org_num;
+    std::string input;
+    WorldManager wm(map_size, org_num);
+    do {
+        wm.Update();
+        std::getline(std::cin, input);
+    } while (input != "END");
+
+    while (input != "END") {
+    }
     wm.Update();
     wm.Update();
     return 0;

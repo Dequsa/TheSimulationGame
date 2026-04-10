@@ -30,10 +30,10 @@ WorldManager::WorldManager(const int map_size, const int organism_count) : world
             continue;
         }
 
-        auto animal_num = static_cast<int>(OrganismTypes::SHEEP);
-        // auto animal_num = rand() % static_cast<int>(OrganismTypes::SHEEP);
+        // auto animal_num = static_cast<int>(OrganismTypes::SHEEP);
+        auto animal_num = rand() % static_cast<int>(OrganismTypes::FOX);
         organisms_.push_back(SpawnAnimals(static_cast<OrganismTypes>(animal_num), spawn_pos));
-    }`
+    }
 }
 
 WorldManager::~WorldManager() {
@@ -47,6 +47,9 @@ WorldManager::~WorldManager() {
 void WorldManager::SortOrganisms() {
     std::sort(organisms_.begin(), organisms_.end(),
               [](const std::unique_ptr<Organism> &a, const std::unique_ptr<Organism> &b) {
+                  if (a->GetInit() == b->GetInit()) {
+                      return a->GetAge() > b->GetAge();
+                  }
                   return a->GetInit() > b->GetInit();
               });
 }
@@ -54,17 +57,13 @@ void WorldManager::SortOrganisms() {
 
 std::vector<int> WorldManager::GetOrganismIdsAtPositions(const std::vector<Position>& positions) const {
     std::vector<int> ids;
-    // for (int i = 0; i < organisms_.size(); i++) {
-    //     for (const auto& pos : positions) {
-    //         if (organisms_[i]->GetPosition() == pos) {
-    //             ids.push_back(i);
-    //             break;
-    //         }
-    //     }
-    // }
+
     for (const auto target_pos : positions) {
         for (int i = 0; i < organisms_.size(); i++) {
+
             if ( organisms_[i]->GetPosition() == target_pos) {
+
+                // check for duplicates
                 if (std::find(ids.begin(), ids.end(), i) == ids.end()) {
                     ids.push_back(i);
                     break;
@@ -106,10 +105,10 @@ Position WorldManager::GetChildSpawnPosition(const std::vector<Position> &positi
         for (int k = -1; k < 2; k++) {
             for (int i = -1; i < 2; i++) {
                 const Position c_pos = {k + x, i + y};
-                if (c_pos.x < 0 || c_pos.y < 0) {
+                if (c_pos.x < 0 || c_pos.y < 0 || c_pos.y >= world_map_.size() || c_pos.x >= world_map_[0].size()) {
                     continue;
                 }
-                if (world_map_[c_pos.y][c_pos.x] == '#') {
+                if (world_map_[c_pos.y][c_pos.x] == MapSprites::EMPTY) {
                     return c_pos;
                 }
             }
@@ -126,9 +125,8 @@ int WorldManager::CreateFight(const std::vector<Position> &positions) {
         }
     }
 
-    //TODO DO THIS
     const std::vector<int> ids = GetOrganismIdsAtPositions(positions);
-
+    std::cout << organisms_[ids[0]]->GetType() << " is attacking " << organisms_[ids[1]]->GetType() << " at " << organisms_[ids[1]]->GetPosition().x << ' ' << organisms_[ids[1]]->GetPosition().y << '\n';
     if (ids.size() < 2) {
         std::cerr << "Error less then two fighters ids\n";
         return -1;
@@ -136,51 +134,69 @@ int WorldManager::CreateFight(const std::vector<Position> &positions) {
 
     int looser_id = ids[0];
     for (const auto id: ids) {
+        organisms_[id]->SetActive(true);
         if (organisms_[looser_id]->GetStr() > organisms_[id]->GetStr()) {
             looser_id = id;
         }
     }
-
+    std::cout << organisms_[looser_id]->GetType() << " died :(\n";
     return looser_id;
 }
 
 std::unique_ptr<Organism> WorldManager::CreateBaby(const std::vector<Position> &positions, const OrganismTypes parent_race) {
-    std::vector<std::unique_ptr<Organism> > new_babies;
     const auto c_pos = GetChildSpawnPosition(positions);
-    auto child = SpawnAnimals(parent_race, c_pos);
-    if (!child) {
-        std::cerr << "Error while spawning child\n";
-        return child;
-    }
 
-    auto parent_ids = GetOrganismIdsAtPositions(positions);
+    const auto parent_ids = GetOrganismIdsAtPositions(positions);
+
+    if (parent_ids.size() < 2) return nullptr;
+
     std::cout << parent_ids.size() << '\n';
     for (const auto id : parent_ids) {
         std::cout << "Parent at: " << organisms_[id]->GetPosition().x << ' ' << organisms_[id]->GetPosition().y << '\n';
         organisms_[id]->SetChild(true);
+        organisms_[id]->SetActive(true);
     }
-    std::cout << "New child at: " << c_pos.x << ' ' << c_pos.y << '\n';
+
+    if (c_pos.x == -1 || c_pos.y == -1) {
+        std::cout << "Unfortunate miscarriage of:" << parent_race << " :(\n";
+        return nullptr;
+    }
+
+    auto child = SpawnAnimals(parent_race, c_pos);
+
+    if (!child) {
+        std::cerr << "Error while spawning child\n";
+        return child;
+    }
+    std::cout << "New child of type: "<< parent_race << " at x: " << c_pos.x << " | y: " << c_pos.y << '\n';
 
     return child;
 }
 
 void WorldManager::Update() {
-    std::cout << "Before update:\n";
-    Render();
-    std::cout << std::endl;
+    for (const auto &org : organisms_) {
+        org->SetActive(false);
+    }
 
     std::vector<std::unique_ptr<Organism> > new_babies;
     std::vector<int> loosers;
 
     for (const auto &organism: organisms_) {
+        if (organism->GetActivity()) continue;
         auto [interaction, pos] = organism->Update();
+
+        organism->SetActive(true);
+
         switch (interaction) {
             case InteractionTypes::FIGHT: {
                 loosers.push_back(CreateFight(pos));
                 break;
             }
             case InteractionTypes::REPRODUCE: {
-                new_babies.push_back(CreateBaby(pos, organism->GetType()));
+                auto baby = CreateBaby(pos, organism->GetType());
+                if (baby) {
+                    new_babies.push_back(std::move(baby));
+                }
                 break;
             }
             case InteractionTypes::MOVE:
@@ -213,6 +229,9 @@ void WorldManager::Update() {
 }
 
 void WorldManager::Render() {
+    for (const auto &org : organisms_) {
+        org->Render();
+    }
     for (const auto &row: world_map_) {
         std::cout << " | ";
         for (const auto tile: row) {
@@ -223,6 +242,7 @@ void WorldManager::Render() {
 }
 
 std::unique_ptr<Organism> WorldManager::SpawnAnimals(const OrganismTypes type, const Position &spawn_pos) {
+    if (spawn_pos.x == -1 || spawn_pos.y == -1) return nullptr;
     std::unique_ptr<Organism> temp;
     switch (type) {
         // Wolf

@@ -5,6 +5,7 @@
 #ifndef C__1_UTILS_H
 #define C__1_UTILS_H
 #pragma once
+#include <iostream>
 
 struct Position {
     Position &operator+=(const Position &that) {
@@ -12,6 +13,7 @@ struct Position {
         this->y += that.y;
         return *this;
     }
+
     Position operator+(const Position &that) const {
         Position res{};
         res.x = this->x + that.x;
@@ -19,7 +21,7 @@ struct Position {
         return res;
     }
 
-    bool operator==(const Position& that) const {
+    bool operator==(const Position &that) const {
         return this->x == that.x && this->y == that.y;
     }
 
@@ -48,8 +50,10 @@ enum class OrganismTypes {
     TURTLE, // 3
     ANTELOPE, // 4
 
-    NONE    // can be also used as count of types
+    NONE // can be also used as count of types
 };
+
+std::ostream &operator<<(std::ostream &os, const OrganismTypes type);
 
 enum class InteractionTypes {
     FIGHT,
@@ -66,7 +70,7 @@ struct AnimalData {
 };
 
 namespace MapSprites {
-    constexpr char EMPTY = '#';
+    constexpr char EMPTY = '.';
 }
 
 #endif //C__1_UTILS_H

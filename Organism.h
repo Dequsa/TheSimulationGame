@@ -20,8 +20,10 @@ protected:
     uint32_t id_{};
     uint8_t str_{};
     uint8_t init_{};
+    int age_{};
     char sprite_{};
     bool child_{};
+    bool has_acted_{};
     OrganismTypes type_{};
 
 public:
@@ -34,7 +36,8 @@ public:
                                     init_(data.init),
                                     sprite_(data.sprite),
                                     type_(data.type),
-                                    child_(true) {
+                                    child_(true),
+                                    has_acted_(true){
         id_ = global_id_counter_++;
     }
 
@@ -64,9 +67,15 @@ public:
 
     bool IsChild() const;
 
-    void SetChild( const bool what) {
-        child_ = what;
-    }
+    void SetChild(const bool what);
+
+    void SetActive(const bool what);
+
+    bool GetActivity() const;
+
+    int GetAge() const;
+
+    virtual void Render() = 0;
 };
 
 struct UpdateData {
