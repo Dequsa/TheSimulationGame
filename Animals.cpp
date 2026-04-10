@@ -6,7 +6,7 @@
 #include <iostream>
 
 UpdateData Animal::Update() {
-    UpdateData data{InteractionTypes::MOVE,nullptr, {{-1, -1}, {-1, -1}}};
+    UpdateData data{InteractionTypes::MOVE, {{-1, -1}, {-1, -1}}};
     const auto dir = GetMoveDirection();
     move_ = SetMovementVector(dir);
 
@@ -18,14 +18,20 @@ UpdateData Animal::Update() {
         case InteractionTypes::FIGHT: {
             const auto enemy_pos = pos_ + move_;
             // Fight(enemy_pos);
-            data = {InteractionTypes::FIGHT,this, {pos_, enemy_pos}};
+            data = {InteractionTypes::FIGHT, {pos_, enemy_pos}};
             return data;
         }
         case InteractionTypes::REPRODUCE: {
+            if (move_.x == 0 && move_.y == 0) {
+                data.interaction = InteractionTypes::MOVE;
+                return data;
+            }
+
             const auto parent_pos = pos_ + move_;
 
-            data = { InteractionTypes::REPRODUCE ,this , {pos_, parent_pos}};
-            is_child = true;
+            child_ = true;
+
+            data = { InteractionTypes::REPRODUCE, {pos_, parent_pos}};
             return data;
         }
         case InteractionTypes::NONE: {
@@ -37,7 +43,10 @@ UpdateData Animal::Update() {
             break;
         }
     }
-    is_child = false;
+
+    // grow up
+    if (child_) child_ = false;
+
     return data;
 }
 
@@ -96,7 +105,7 @@ DIRECTIONS Animal::GetMoveDirection() const {
     for (int i = 0; i < static_cast<int>(DIRECTIONS::DIR_COUNT); i++) {
         auto temp = static_cast<DIRECTIONS>(i);
         if (!CheckIfMovingPositionIsCorner(temp)) {
-            valid_moves[i] = temp;
+            valid_moves[valid_count] = temp;
             valid_count++;
         }
     }

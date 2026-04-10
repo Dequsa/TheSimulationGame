@@ -21,7 +21,7 @@ protected:
     uint8_t str_{};
     uint8_t init_{};
     char sprite_{};
-    bool is_child = false;
+    bool child_{};
     OrganismTypes type_{};
 
 public:
@@ -33,7 +33,8 @@ public:
                                     str_(data.str),
                                     init_(data.init),
                                     sprite_(data.sprite),
-                                    type_(data.type) {
+                                    type_(data.type),
+                                    child_(true) {
         id_ = global_id_counter_++;
     }
 
@@ -61,12 +62,17 @@ public:
 
     OrganismTypes GetType() const;
 
+    bool IsChild() const;
+
+    void SetChild( const bool what) {
+        child_ = what;
+    }
+
     virtual void Render() = 0;
 };
 
 struct UpdateData {
     InteractionTypes interaction;
-    Organism *org;
     std::vector<Position> pos;
 };
 

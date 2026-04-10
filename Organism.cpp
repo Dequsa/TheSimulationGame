@@ -26,3 +26,7 @@ int Organism::GetInit() const {
 OrganismTypes Organism::GetType() const {
     return type_;
 }
+
+bool Organism::IsChild() const {
+    return child_;
+}
