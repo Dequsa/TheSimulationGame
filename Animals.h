@@ -18,20 +18,20 @@ enum class CollisionTypes {
 class WorldManager;
 
 class Animal : public Organism {
+protected:
     Position move_;
 
     bool CheckIfMovingPositionIsCorner(const DIRECTIONS dir) const;
 
     DIRECTIONS GetMoveDirection() const;
 
-protected:
     OrganismTypes GetType() const { return type_; }
 
-    InteractionTypes CheckCollision() const;
+    virtual InteractionTypes CheckCollision();
 
     void Move();
 
-    Position SetMovementVector(const DIRECTIONS dir) const;
+    virtual Position SetMovementVector(const DIRECTIONS dir);
 
 public:;
 
@@ -39,11 +39,17 @@ public:;
            const Position &spawn_pos) : Organism(world_map, data, spawn_pos){
     }
 
-    ~Animal() override = default;
+    ~Animal() override;
 
     UpdateData Update() override;
 
-    void Render();
+    virtual bool SpecialCheck(const Organism &other) const override {return false;}
+
+    virtual void SpecialAbility() override {}
+
+    void SetPosition(const Position &pos) override;
+
+    void Render() override;
 };
 
 #endif //C__1_ANIMALS_H

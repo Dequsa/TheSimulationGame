@@ -13,14 +13,24 @@ class Organism;
 struct AnimalData;
 struct UpdateData;
 
+namespace ReturnCodes {
+    constexpr int OK = 0;
+    constexpr int ERROR = -1;
+    constexpr int SPECIAL_ABILITY = -2;
+    constexpr int SPECIAL_DEFENDER = -3;
+}
+
 class WorldManager {
     std::vector<std::unique_ptr<Organism>> organisms_;
     std::vector<std::vector<char>> world_map_;
 
+    // special abilities
+    bool CheckIfAttackerIsFox(const Organism &org1, const Organism &org2);
+
     Position ChooseAndSetSpawnPoint() const;
     Position GetChildSpawnPosition(const std::vector<Position> &positions) const;
     std::vector<int> GetOrganismIdsAtPositions(const std::vector<Position>& positions) const;
-    int CreateFight(const std::vector<Position> &positions);
+    int CreateFight(const std::vector<Position> &positions) const;
     std::unique_ptr<Organism> CreateBaby(const std::vector<Position> &positions, OrganismTypes parent_race);
     void SortOrganisms();
 public:

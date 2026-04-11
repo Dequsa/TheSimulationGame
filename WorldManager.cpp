@@ -31,7 +31,7 @@ WorldManager::WorldManager(const int map_size, const int organism_count) : world
         }
 
         // auto animal_num = static_cast<int>(OrganismTypes::SHEEP);
-        auto animal_num = rand() % static_cast<int>(OrganismTypes::FOX);
+        auto animal_num = rand() % static_cast<int>(OrganismTypes::ANTELOPE);
         organisms_.push_back(SpawnAnimals(static_cast<OrganismTypes>(animal_num), spawn_pos));
     }
 }
@@ -74,6 +74,7 @@ std::vector<int> WorldManager::GetOrganismIdsAtPositions(const std::vector<Posit
     return ids;
 }
 
+
 Position WorldManager::ChooseAndSetSpawnPoint() const {
     const int max_x = static_cast<int>(world_map_[0].size());
     const int max_y = static_cast<int>(world_map_.size());
@@ -81,8 +82,8 @@ Position WorldManager::ChooseAndSetSpawnPoint() const {
     // (1 --- max_x - 1) <- range of rand so we can do the search with checking neighbors
 
     while (max_tries--) {
-        const int r_x = 1 + rand() % (max_x - 2);
-        const int r_y = 1 + rand() % (max_y - 2);
+        const int r_x = rand() % max_x;
+        const int r_y = rand() % max_y ;
 
         // check random position if its empty
         if (world_map_[r_y][r_x] == MapSprites::EMPTY) {
@@ -117,7 +118,8 @@ Position WorldManager::GetChildSpawnPosition(const std::vector<Position> &positi
     return {-1, -1};
 }
 
-int WorldManager::CreateFight(const std::vector<Position> &positions) {
+// position 0 is position of the one who starts the fight
+int WorldManager::CreateFight(const std::vector<Position> &positions) const {
     for (const auto [x, y]: positions) {
         if (x == -1 || y == -1) {
             std::cerr << "Error while creating a fight at pos: " << x << ' ' << y << '\n';
@@ -125,21 +127,45 @@ int WorldManager::CreateFight(const std::vector<Position> &positions) {
         }
     }
 
+    // 0 - ATTACKER | 1 - DEFENDER
     const std::vector<int> ids = GetOrganismIdsAtPositions(positions);
-    std::cout << organisms_[ids[0]]->GetType() << " is attacking " << organisms_[ids[1]]->GetType() << " at " << organisms_[ids[1]]->GetPosition().x << ' ' << organisms_[ids[1]]->GetPosition().y << '\n';
+
     if (ids.size() < 2) {
         std::cerr << "Error less then two fighters ids\n";
-        return -1;
+        return ReturnCodes::ERROR;
     }
 
-    int looser_id = ids[0];
-    for (const auto id: ids) {
-        organisms_[id]->SetActive(true);
-        if (organisms_[looser_id]->GetStr() > organisms_[id]->GetStr()) {
-            looser_id = id;
-        }
+    const int attacker_id = ids[0];
+    const int defender_id = ids[1];
+
+    if (organisms_[attacker_id]->SpecialCheck(*organisms_[defender_id])) {
+        return ReturnCodes::SPECIAL_ABILITY;
     }
+
+    //TODO FIX THE TURTLE ERROR NOT CHECKING SPECIAL TRUE
+    if (organisms_[defender_id]->SpecialCheck(*organisms_[attacker_id])) {
+        organisms_[defender_id]->SpecialAbility();
+        return ReturnCodes::SPECIAL_DEFENDER;
+    }
+
+    std::cout << organisms_[attacker_id]->GetType() << " is attacking " << organisms_[defender_id]->GetType() << " at " << organisms_[defender_id]->GetPosition().x << ' ' << organisms_[defender_id]->GetPosition().y << '\n';
+
+    int winner_id, looser_id;
+
+    if (organisms_[attacker_id]->GetStr() >= organisms_[defender_id]->GetStr()) {
+        winner_id = attacker_id;
+        looser_id = defender_id;
+    } else {
+        winner_id = defender_id;
+        looser_id = attacker_id;
+    }
+
     std::cout << organisms_[looser_id]->GetType() << " died :(\n";
+
+    if (winner_id == attacker_id) {
+        organisms_[winner_id]->SetPosition(organisms_[looser_id]->GetPosition());
+    }
+
     return looser_id;
 }
 
@@ -189,7 +215,20 @@ void WorldManager::Update() {
 
         switch (interaction) {
             case InteractionTypes::FIGHT: {
-                loosers.push_back(CreateFight(pos));
+                auto looser_id = CreateFight(pos);
+
+                if (looser_id == ReturnCodes::SPECIAL_ABILITY) {
+                    organism->SpecialAbility();
+                    break;
+                }
+
+                // no fight defender used special escape / deflect ability
+                if (looser_id == ReturnCodes::SPECIAL_DEFENDER) {
+                    break;
+                }
+
+                loosers.push_back(looser_id);
+
                 break;
             }
             case InteractionTypes::REPRODUCE: {
@@ -211,7 +250,6 @@ void WorldManager::Update() {
     const bool need_sort = !loosers.empty() || !new_babies.empty();
 
     std::sort(loosers.rbegin(), loosers.rend());
-    loosers.erase(std::unique(loosers.begin(), loosers.end()), loosers.end());
     for (const auto loser: loosers) {
         if (loser != -1 ) organisms_.erase(organisms_.begin() + loser);
     }
@@ -252,12 +290,12 @@ std::unique_ptr<Organism> WorldManager::SpawnAnimals(const OrganismTypes type, c
         case OrganismTypes::SHEEP: {
             return std::make_unique<Sheep>(world_map_, spawn_pos);
         }
-        // case AnimalTypes::FOX: {
-        //     return new Fox();
-        // }
-        // case AnimalTypes::TURTLE: {
-        //     return new Turtle();
-        // }
+        case OrganismTypes::FOX: {
+            return std::make_unique<Fox>(world_map_, spawn_pos);
+        }
+        case OrganismTypes::TURTLE: {
+            return std::make_unique<Turtle>(world_map_, spawn_pos);
+        }
         // case AnimalTypes::ANTELOPE: {
         //     return new Antelope();
         // }

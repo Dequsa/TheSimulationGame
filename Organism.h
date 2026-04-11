@@ -41,20 +41,15 @@ public:
         id_ = global_id_counter_++;
     }
 
-    // Organism(std::vector<std::vector<char> > &world_map, const int str, const int init, const char sprite,
-    //      const Position &pos) : world_map_(world_map),
-    //                             pos_(pos),
-    //                             str_(str),
-    //                             init_(init),
-    //                             sprite_(sprite) {
-    //     id_ = global_id_counter_++;
-    // }
-
     Organism(const Organism &org) = default;
 
     virtual ~Organism() = default;
 
     virtual UpdateData Update() = 0;
+
+    virtual bool SpecialCheck(const Organism &other) const = 0;
+
+    virtual void SpecialAbility() {}
 
     // organism getters
     Position GetPosition() const;
@@ -67,14 +62,19 @@ public:
 
     bool IsChild() const;
 
-    void SetChild(const bool what);
-
-    void SetActive(const bool what);
-
     bool GetActivity() const;
 
     int GetAge() const;
 
+
+    // setters
+    void SetChild(const bool what);
+
+    void SetActive(const bool what);
+
+    virtual void SetPosition(const Position &pos);
+
+    // other
     virtual void Render() = 0;
 };
 

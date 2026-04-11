@@ -5,6 +5,10 @@
 #include "Animals.h"
 #include <iostream>
 
+Animal::~Animal() {
+    world_map_[pos_.y][pos_.x] = MapSprites::EMPTY;
+}
+
 UpdateData Animal::Update() {
     age_++;
     UpdateData data{InteractionTypes::MOVE, {{-1, -1}, {-1, -1}}};
@@ -51,6 +55,11 @@ UpdateData Animal::Update() {
     return data;
 }
 
+void Animal::SetPosition(const Position &pos) {
+    world_map_[pos_.y][pos_.x] = MapSprites::EMPTY;
+    Organism::SetPosition(pos);
+}
+
 void Animal::Render() {
     world_map_[pos_.y][pos_.x] = sprite_;
 }
@@ -73,7 +82,7 @@ bool Animal::CheckIfMovingPositionIsCorner(const DIRECTIONS dir) const {
     return hit_x_edge || hit_y_edge;
 }
 
-InteractionTypes Animal::CheckCollision() const {
+InteractionTypes Animal::CheckCollision() {
     const auto [x, y] = pos_ + move_;
 
     if (x == -1 || y == -1) {
@@ -116,7 +125,7 @@ DIRECTIONS Animal::GetMoveDirection() const {
     return valid_moves[rand() % valid_count];
 }
 
-Position Animal::SetMovementVector(const DIRECTIONS dir) const {
+Position Animal::SetMovementVector(const DIRECTIONS dir) {
     // const DIRECTIONS dir = GetMoveDirection();
     Position move = {0, 0};
     switch (dir) {

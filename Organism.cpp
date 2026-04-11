@@ -39,6 +39,10 @@ void Organism::SetActive(const bool what) {
     has_acted_ = what;
 }
 
+void Organism::SetPosition(const Position &pos) {
+    pos_ = pos;
+}
+
 bool Organism::GetActivity() const {
     return has_acted_;
 }
