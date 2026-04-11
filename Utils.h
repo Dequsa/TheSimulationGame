@@ -6,6 +6,7 @@
 #define C__1_UTILS_H
 #pragma once
 #include <iostream>
+#include "Animals.h"
 
 struct Position {
     Position &operator+=(const Position &that) {
@@ -54,6 +55,8 @@ enum class OrganismTypes {
 };
 
 std::ostream &operator<<(std::ostream &os, const OrganismTypes type);
+std::ostream &operator<<(std::ostream &os, const Position &pos);
+std::ostream &operator<<(std::ostream &os, const Organism &org);
 
 enum class InteractionTypes {
     FIGHT,

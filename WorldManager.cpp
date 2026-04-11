@@ -132,6 +132,7 @@ int WorldManager::CreateFight(const std::vector<Position> &positions) const {
 
     if (ids.size() < 2) {
         std::cerr << "Error less then two fighters ids\n";
+        std::cout << organisms_[ids[0]] << '\n';
         return ReturnCodes::ERROR;
     }
 
