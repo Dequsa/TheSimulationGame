@@ -10,7 +10,6 @@ Animal::~Animal() {
 }
 
 UpdateData Animal::Update() {
-    age_++;
     UpdateData data{InteractionTypes::MOVE, {{-1, -1}, {-1, -1}}};
     const auto dir = GetMoveDirection();
     move_ = SetMovementVector(dir);
@@ -53,11 +52,6 @@ UpdateData Animal::Update() {
     if (child_) child_ = false;
 
     return data;
-}
-
-void Animal::SetPosition(const Position &pos) {
-    world_map_[pos_.y][pos_.x] = MapSprites::EMPTY;
-    Organism::SetPosition(pos);
 }
 
 void Animal::Render() {

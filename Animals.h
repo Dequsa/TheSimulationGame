@@ -47,8 +47,6 @@ public:;
 
     virtual void SpecialAbility() override {}
 
-    void SetPosition(const Position &pos) override;
-
     void Render() override;
 };
 

@@ -29,9 +29,17 @@ class WorldManager {
 
     Position ChooseAndSetSpawnPoint() const;
     Position GetChildSpawnPosition(const std::vector<Position> &positions) const;
+
     std::vector<int> GetOrganismIdsAtPositions(const std::vector<Position>& positions) const;
-    int CreateFight(const std::vector<Position> &positions) const;
+
+    void CreateFight(std::vector<int> &loosers, const std::unique_ptr<Organism> &organism, const std::vector<Position> &pos);
+
+    int GetFightLoosersId(const std::vector<Position> &positions) const;
+
     std::unique_ptr<Organism> CreateBaby(const std::vector<Position> &positions, OrganismTypes parent_race);
+
+    void ResetActivityAllOrganisms();
+
     void SortOrganisms();
 public:
     WorldManager(const int map_size, const int organism_count);

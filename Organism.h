@@ -72,7 +72,9 @@ public:
 
     void SetActive(const bool what);
 
-    virtual void SetPosition(const Position &pos);
+    void SetPosition(const Position &pos);
+
+    void AgeUp(int n);
 
     // other
     virtual void Render() = 0;

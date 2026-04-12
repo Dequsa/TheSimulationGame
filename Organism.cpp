@@ -40,7 +40,13 @@ void Organism::SetActive(const bool what) {
 }
 
 void Organism::SetPosition(const Position &pos) {
+    world_map_[pos_.y][pos_.x] = MapSprites::EMPTY;
     pos_ = pos;
+    world_map_[pos_.y][pos_.x] = sprite_;
+}
+
+void Organism::AgeUp(int n) {
+    age_ += n;
 }
 
 bool Organism::GetActivity() const {
