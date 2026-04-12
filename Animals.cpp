@@ -36,6 +36,8 @@ UpdateData Animal::Update() {
             child_ = true;
 
             data = { InteractionTypes::REPRODUCE, {pos_, parent_pos}};
+
+            move_ = SetMovementVector(DIRECTIONS::MID_MID);
             return data;
         }
         case InteractionTypes::NONE: {

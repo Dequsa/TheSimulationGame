@@ -12,18 +12,21 @@ Position Turtle::SetMovementVector(const DIRECTIONS dir) {
         direction = DIRECTIONS::MID_MID;
         return Animal::SetMovementVector(direction);
     }
-    is_moving_ = true;
+
+    if (direction != DIRECTIONS::MID_MID) {
+        is_moving_ = true;
+    }
     return Animal::SetMovementVector(direction);
 }
 
 bool Turtle::SpecialCheck(const Organism &other) const {
     if (!is_moving_) {
-        std::cout<< *this << " is deflecting enemy: " << other << '\n';
         return other.GetStr() <= TURTLE::MAX_DEFLECT_STR;
     }
     return false;
 }
 
 void Turtle::SpecialAbility() {
+    std::cout<< *this << " is deflecting enemy" << '\n';
     // he does nothing just stands there
 }

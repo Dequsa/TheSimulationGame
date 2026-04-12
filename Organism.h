@@ -24,6 +24,7 @@ protected:
     char sprite_{};
     bool child_{};
     bool has_acted_{};
+    bool is_alive_{};
     OrganismTypes type_{};
 
 public:
@@ -37,7 +38,8 @@ public:
                                     sprite_(data.sprite),
                                     type_(data.type),
                                     child_(true),
-                                    has_acted_(true){
+                                    has_acted_(true),
+                                    is_alive_(true){
         id_ = global_id_counter_++;
     }
 
@@ -66,11 +68,14 @@ public:
 
     int GetAge() const;
 
+    bool GetLife() const;
 
     // setters
     void SetChild(const bool what);
 
     void SetActive(const bool what);
+
+    void SetLife(const bool what);
 
     void SetPosition(const Position &pos);
 

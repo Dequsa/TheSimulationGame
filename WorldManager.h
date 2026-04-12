@@ -21,26 +21,34 @@ namespace ReturnCodes {
 }
 
 class WorldManager {
-    std::vector<std::unique_ptr<Organism>> organisms_;
-    std::vector<std::vector<char>> world_map_;
+    std::vector<std::unique_ptr<Organism> > organisms_;
+    std::vector<std::vector<char> > world_map_;
 
     // special abilities
     bool CheckIfAttackerIsFox(const Organism &org1, const Organism &org2);
 
     Position ChooseAndSetSpawnPoint() const;
+
     Position GetChildSpawnPosition(const std::vector<Position> &positions) const;
 
-    std::vector<int> GetOrganismIdsAtPositions(const std::vector<Position>& positions) const;
+    std::vector<int> GetOrganismIdsAtPositions(const std::vector<Position> &positions) const;
 
-    void CreateFight(std::vector<int> &loosers, const std::unique_ptr<Organism> &organism, const std::vector<Position> &pos);
+    void CreateFight(std::vector<int> &loosers, const std::unique_ptr<Organism> &organism,
+                     const std::vector<Position> &pos);
 
     int GetFightLoosersId(const std::vector<Position> &positions) const;
 
+    void Reproduce(std::vector<std::unique_ptr<Organism> > &new_babies, const std::vector<Position> &pos, const OrganismTypes parent_race);
+
     std::unique_ptr<Organism> CreateBaby(const std::vector<Position> &positions, OrganismTypes parent_race);
+
+    bool AddOrganisms(std::vector<std::unique_ptr<Organism> > &new_organisms);
+    bool DeleteOrganismsByIds(std::vector<int> &delete_ids);
 
     void ResetActivityAllOrganisms();
 
     void SortOrganisms();
+
 public:
     WorldManager(const int map_size, const int organism_count);
 
@@ -54,7 +62,7 @@ public:
 
     void Render();
 
-    std::vector<std::vector<char>> &GetWorldMap() { return world_map_; }
+    std::vector<std::vector<char> > &GetWorldMap() { return world_map_; }
 };
 
 

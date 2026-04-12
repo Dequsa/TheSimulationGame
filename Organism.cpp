@@ -39,6 +39,10 @@ void Organism::SetActive(const bool what) {
     has_acted_ = what;
 }
 
+void Organism::SetLife(const bool what) {
+    is_alive_ = what;
+}
+
 void Organism::SetPosition(const Position &pos) {
     world_map_[pos_.y][pos_.x] = MapSprites::EMPTY;
     pos_ = pos;
@@ -55,4 +59,8 @@ bool Organism::GetActivity() const {
 
 int Organism::GetAge() const {
     return age_;
+}
+
+bool Organism::GetLife() const {
+    return is_alive_;
 }
