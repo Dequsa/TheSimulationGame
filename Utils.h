@@ -6,7 +6,8 @@
 #define C__1_UTILS_H
 #pragma once
 #include <iostream>
-#include "Animals.h"
+
+class Organism;
 
 struct Position {
     Position &operator+=(const Position &that) {

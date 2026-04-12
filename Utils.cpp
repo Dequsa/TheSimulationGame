@@ -3,7 +3,7 @@
 //
 
 #include "Utils.h"
-
+#include "Organism.h"
 
 std::ostream &operator<<(std::ostream &os, const OrganismTypes type) {
     switch (type) {
