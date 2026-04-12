@@ -131,6 +131,17 @@ int WorldManager::CreateFight(const std::vector<Position> &positions) const {
     const std::vector<int> ids = GetOrganismIdsAtPositions(positions);
 
     if (ids.size() < 2) {
+        std::cerr << "DEBUG: Looking for organisms at: "
+                  << positions[0].x << "," << positions[0].y << " and "
+                  << positions[1].x << "," << positions[1].y << "\n";
+
+        for (const auto& org : organisms_) {
+            std::cerr << "Vector has " << org->GetType() << " at "
+                      << org->GetPosition().x << "," << org->GetPosition().y << "\n";
+        }
+    }
+
+    if (ids.size() < 2) {
         std::cerr << "Error less then two fighters ids\n";
         std::cout << organisms_[ids[0]] << '\n';
         return ReturnCodes::ERROR;

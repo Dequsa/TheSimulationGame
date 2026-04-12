@@ -10,6 +10,7 @@ Position Turtle::SetMovementVector(const DIRECTIONS dir) {
     if (rand() % 4 < 3) {
         is_moving_ = false;
         direction = DIRECTIONS::MID_MID;
+        return Animal::SetMovementVector(direction);
     }
     is_moving_ = true;
     return Animal::SetMovementVector(direction);
@@ -17,7 +18,8 @@ Position Turtle::SetMovementVector(const DIRECTIONS dir) {
 
 bool Turtle::SpecialCheck(const Organism &other) const {
     if (!is_moving_) {
-        return other.GetStr() < TURTLE::MAX_DEFLECT_STR;
+        std::cout<< *this << " is deflecting enemy: " << other << '\n';
+        return other.GetStr() <= TURTLE::MAX_DEFLECT_STR;
     }
     return false;
 }

@@ -12,7 +12,10 @@ bool Fox::SpecialCheck(const Organism &other) const {
 }
 
 void Fox::SpecialAbility() {
+    world_map_[pos_.y][pos_.x] = MapSprites::EMPTY;
     pos_ = last_pos_;
+    world_map_[pos_.y][pos_.x] = sprite_;
+    move_ = {0 , 0};
 }
 
 Position Fox::SetMovementVector(const DIRECTIONS dir) {

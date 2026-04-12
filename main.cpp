@@ -9,10 +9,5 @@ int main() {
         wm.Update();
         std::getline(std::cin, input);
     } while (input != "END");
-
-    while (input != "END") {
-    }
-    wm.Update();
-    wm.Update();
     return 0;
 }
