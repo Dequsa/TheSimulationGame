@@ -49,7 +49,7 @@ void Organism::SetPosition(const Position &pos) {
     world_map_[pos_.y][pos_.x] = sprite_;
 }
 
-void Organism::AgeUp(int n) {
+void Organism::AgeUp(const int n) {
     age_ += n;
 }
 

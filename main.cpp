@@ -6,8 +6,8 @@ int main() {
     std::string input;
     WorldManager wm(map_size, org_num);
     do {
-        wm.Update();
         std::getline(std::cin, input);
+        wm.Update();
     } while (input != "END");
     return 0;
 }

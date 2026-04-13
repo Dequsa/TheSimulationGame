@@ -1,7 +1,3 @@
-//
-// Created by Kacper Marciniak on 3/11/26.
-//
-
 #include "WorldManager.h"
 #include <ctime>
 #include <iostream>
@@ -21,7 +17,7 @@ WorldManager::WorldManager(const int map_size, const int organism_count) : world
     // add organisms to the world_map
     for (int i = 0; i < organism_count; i++) {
         // for all 5 subclasses
-        // const int animal_num = rand() % static_cast<int>(OrganismTypes::NONE);
+        const int animal_num = rand() % static_cast<int>(OrganismTypes::NONE);
 
         Position spawn_pos = ChooseAndSetSpawnPoint();
 
@@ -31,7 +27,7 @@ WorldManager::WorldManager(const int map_size, const int organism_count) : world
         }
 
         // auto animal_num = static_cast<int>(OrganismTypes::SHEEP);
-        auto animal_num = rand() % static_cast<int>(OrganismTypes::ANTELOPE);
+        // auto animal_num = rand() % static_cast<int>(OrganismTypes::ANTELOPE);
         organisms_.push_back(SpawnAnimals(static_cast<OrganismTypes>(animal_num), spawn_pos));
     }
     SortOrganisms();
@@ -200,7 +196,7 @@ std::unique_ptr<Organism> WorldManager::CreateBaby(const std::vector<Position> &
     }
 
     if (c_pos.x == -1 || c_pos.y == -1) {
-        std::cout << "Unfortunate miscarriage of:" << parent_race << " :(\n";
+        std::cout << "Unfortunate miscarriage of: " << parent_race << " :(\n";
         return nullptr;
     }
 
@@ -359,9 +355,9 @@ std::unique_ptr<Organism> WorldManager::SpawnAnimals(const OrganismTypes type, c
         case OrganismTypes::TURTLE: {
             return std::make_unique<Turtle>(world_map_, spawn_pos);
         }
-        // case AnimalTypes::ANTELOPE: {
-        //     return new Antelope();
-        // }
+        case OrganismTypes::ANTELOPE: {
+            return std::make_unique<Antelope>(world_map_, spawn_pos);
+        }
         default: {
             std::cerr << "Unknown AnimalType" << std::endl;
         }
