@@ -289,7 +289,6 @@ void WorldManager::Update() {
         SortOrganisms();
     }
 
-    std::cout << "After update:\n";
     Render();
 }
 
@@ -298,9 +297,19 @@ bool WorldManager::AddOrganisms(std::vector<std::unique_ptr<Organism> > &new_org
         return false;
     }
     for (auto &org: new_organisms) {
+        if (org == nullptr) continue;
+
         organisms_.push_back(std::move(org));
     }
 
+    return true;
+}
+
+
+bool CheckDelete(const int id) {
+    if (id == ReturnCodes::ERROR || id == ReturnCodes::SPECIAL_ABILITY || id == ReturnCodes::SPECIAL_DEFENDER) {
+        return false;
+    }
     return true;
 }
 
@@ -311,7 +320,9 @@ bool WorldManager::DeleteOrganismsByIds(std::vector<int> &delete_ids) {
 
     std::sort(delete_ids.rbegin(), delete_ids.rend());
     for (const auto loser: delete_ids) {
-        if (loser != -1) organisms_.erase(organisms_.begin() + loser);
+        if (CheckDelete(loser)) {
+            organisms_.erase(organisms_.begin() + loser);
+        }
     }
 
     return true;
