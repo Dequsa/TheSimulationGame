@@ -9,17 +9,17 @@
 namespace GRASS {
     constexpr int STR = 0;
     constexpr char SPRITE = 'G';
-    //constexpr auto TYPE =  OrganismTypes::GRASS;
+    constexpr auto TYPE =  OrganismTypes::GRASS;
 }
 
 class Grass final : public Plants {
     static constexpr  PlantData data_ = {
         GRASS::STR,
         GRASS::SPRITE,
-        // GRASS::TYPE
+        GRASS::TYPE
     };
     public:
-    Grass(std::vector<std::vector<char> > &world_map,  const Position &spawn_pos) : Plants(world_map, data_, spawn_pos) {}
+    Grass(std::vector<std::vector<Organism*> > &world_map,  const Position &spawn_pos) : Plants(world_map, data_, spawn_pos) {}
     ~Grass() override = default;
 };
 

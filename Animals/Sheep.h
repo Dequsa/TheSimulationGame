@@ -21,7 +21,7 @@ class Sheep final : public Animal {
     };
 
 public:
-    Sheep(std::vector<std::vector<char> > &world_map, const Position &spawn_pos) : Animal(
+    Sheep(std::vector<std::vector<Organism*> > &world_map, const Position &spawn_pos) : Animal(
         world_map, Sheep_data_, spawn_pos) {
     }
 

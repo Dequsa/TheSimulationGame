@@ -24,7 +24,7 @@ class Fox final : public Animal {
     Position last_pos_{};
 
 public:
-    Fox(std::vector<std::vector<char> > &world_map, const Position &spawn_pos) : Animal(
+    Fox(std::vector<std::vector<Organism*> > &world_map, const Position &spawn_pos) : Animal(
         world_map, data_, spawn_pos) {
     }
 

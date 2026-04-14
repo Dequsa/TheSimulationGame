@@ -4,7 +4,9 @@
 
 #include "Plants.h"
 
-Plants::Plants(std::vector<std::vector<char> > &world_map, const PlantData &data, const Position &pos) : Organism(world_map, data, pos) {}
+Plants::Plants(std::vector<std::vector<Organism*> > &world_map, const PlantData &data, const Position &pos) : Organism(
+    world_map, data, pos) {
+}
 
 UpdateData Plants::Update() {
     UpdateData data{InteractionTypes::MOVE, {{-1, -1}, {-1, -1}}};
@@ -19,7 +21,7 @@ UpdateData Plants::Update() {
 
             const auto parent_pos = pos_;
 
-            data = { InteractionTypes::REPRODUCE, {pos_, parent_pos}};
+            data = {InteractionTypes::REPRODUCE, {pos_, parent_pos}};
 
             break;
         }
@@ -37,7 +39,7 @@ UpdateData Plants::Update() {
 }
 
 void Plants::Render() {
-    world_map_[pos_.y][pos_.x] = sprite_;
+    world_map_[pos_.y][pos_.x] = this;
 }
 
 InteractionTypes Plants::CheckCollision() {
@@ -47,11 +49,12 @@ InteractionTypes Plants::CheckCollision() {
         return InteractionTypes::NONE;
     }
 
-    const char sprite_on_map = world_map_[y][x];
+    const Organism *target = world_map_[y][x];
 
-    if (sprite_on_map == MapSprites::EMPTY) {
+    if (target) {
         // 12.5% chance to sow
-        if ((rand() & 7) == 0) { // 0111 = 7 (1/2 * 1/2 * 1/2)
+        if ((rand() & 7) == 0) {
+            // 0111 = 7 (1/2 * 1/2 * 1/2)
             return InteractionTypes::REPRODUCE;
         }
     }

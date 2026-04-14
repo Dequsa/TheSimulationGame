@@ -14,7 +14,7 @@
 constexpr int MAX_TRIES = 200;
 
 WorldManager::WorldManager(const int map_size, const int organism_count) : world_map_(
-    map_size, std::vector(map_size, MapSprites::EMPTY)) {
+    map_size, std::vector<Organism *>(map_size, nullptr)) {
     std::srand(time(NULL));
     // add organisms to the world_map
     for (int i = 0; i < organism_count; i++) {
@@ -54,21 +54,46 @@ void WorldManager::SortOrganisms() {
 }
 
 
-std::vector<int> WorldManager::GetOrganismIdsAtPositions(const std::vector<Position> &positions) const {
-    std::vector<int> ids;
+// std::vector<int> WorldManager::GetOrganismIdsAtPositions(const std::vector<Position> &positions) const {
+//     std::vector<int> ids;
+//
+//     for (const auto target_pos: positions) {
+//         for (int i = 0; i < organisms_.size(); i++) {
+//             if (organisms_[i]->GetPosition() == target_pos && organisms_[i]->GetLife()) {
+//                 // check for duplicates
+//                 if (std::find(ids.begin(), ids.end(), i) == ids.end()) {
+//                     ids.push_back(i);
+//                     break;
+//                 }
+//             }
+//         }
+//     }
+//     return ids;
+// }
 
-    for (const auto target_pos: positions) {
-        for (int i = 0; i < organisms_.size(); i++) {
-            if (organisms_[i]->GetPosition() == target_pos && organisms_[i]->GetLife()) {
-                // check for duplicates
-                if (std::find(ids.begin(), ids.end(), i) == ids.end()) {
-                    ids.push_back(i);
-                    break;
-                }
-            }
+bool WorldManager::CheckMapContains(const std::vector<Position> &positions) const {
+    for (const auto [x, y]: positions) {
+        if (x == -1 || y == -1) {
+            std::cerr << "Error while creating a baby or a fight at pos: " << x << ' ' << y << '\n';
+            return false;
         }
     }
-    return ids;
+
+    for (const auto [x, y]: positions) {
+        if (x < 0 || y < 0 || y >= world_map_.size() || x >= world_map_[0].size()) {
+            return false;
+        }
+
+        if (world_map_[y][x] != nullptr) {
+            world_map_[y][x]->SetActive(true);
+        } else {
+            return false;
+        }
+    }
+
+    if (positions.size() < 2) return false;
+
+    return true;
 }
 
 Position WorldManager::ChooseAndSetSpawnPoint() const {
@@ -82,13 +107,13 @@ Position WorldManager::ChooseAndSetSpawnPoint() const {
         const int r_y = rand() % max_y;
 
         // check random position if its empty
-        if (world_map_[r_y][r_x] == MapSprites::EMPTY) {
+        if (world_map_[r_y][r_x] == nullptr) {
             return Position{r_x, r_y};
         }
 
         for (int i = -1; i < 2; i++) {
             for (int j = -1; j < 2; j++) {
-                if (world_map_[r_y + i][r_x + j] == MapSprites::EMPTY) {
+                if (world_map_[r_y + i][r_x + j] == nullptr) {
                     return Position{r_x + j, r_y + i};
                 }
             }
@@ -105,7 +130,7 @@ Position WorldManager::GetChildSpawnPosition(const std::vector<Position> &positi
                 if (c_pos.x < 0 || c_pos.y < 0 || c_pos.y >= world_map_.size() || c_pos.x >= world_map_[0].size()) {
                     continue;
                 }
-                if (world_map_[c_pos.y][c_pos.x] == MapSprites::EMPTY) {
+                if (world_map_[c_pos.y][c_pos.x] == nullptr) {
                     return c_pos;
                 }
             }
@@ -115,148 +140,140 @@ Position WorldManager::GetChildSpawnPosition(const std::vector<Position> &positi
 }
 
 // position 0 is position of the one who starts the fight
-int WorldManager::GetFightLosersId(const std::vector<Position> &positions) {
-    for (const auto [x, y]: positions) {
-        if (x == -1 || y == -1) {
-            std::cerr << "Error while creating a fight at pos: " << x << ' ' << y << '\n';
-            return -1;
-        }
+FightResults WorldManager::GetFightLosers(const std::vector<Position> &positions) {
+    if (!CheckMapContains(positions)) {
+        return {ReturnCodes::ERROR, nullptr};
     }
 
-    // 0 - ATTACKER | 1 - DEFENDER
-    const std::vector<int> ids = GetOrganismIdsAtPositions(positions);
+    auto attacker = world_map_[positions[0].y][positions[0].x];
+    auto defender = world_map_[positions[1].y][positions[1].x];
 
-    if (ids.size() < 2 && !ids.empty()) {
-        std::cerr << "Error less then two fighters ids\n";
-        std::cout << organisms_[ids[0]] << '\n';
-        return ReturnCodes::ERROR;
+    if (attacker == defender) {
+        return {ReturnCodes::ERROR, nullptr};
     }
 
-    for (const auto id: ids) {
-        organisms_[id]->SetActive(true);
+    if (attacker->SpecialCheck(*defender)) {
+        return {ReturnCodes::SPECIAL_ABILITY, nullptr};
     }
 
-    const int attacker_id = ids[0];
-    const int defender_id = ids[1];
-
-    if (organisms_[attacker_id]->GetType() == organisms_[defender_id]->GetType()) {
-        return ReturnCodes::ERROR;
+    if (defender->SpecialCheck(*attacker)) {
+        defender->SpecialAbility();
+        return {ReturnCodes::SPECIAL_DEFENDER, nullptr};
     }
 
-    if (organisms_[attacker_id]->SpecialCheck(*organisms_[defender_id])) {
-        return ReturnCodes::SPECIAL_ABILITY;
-    }
+    std::cout << *attacker << " is attacking " << *defender << '\n';
 
-    if (organisms_[defender_id]->SpecialCheck(*organisms_[attacker_id])) {
-        organisms_[defender_id]->SpecialAbility();
-        return ReturnCodes::SPECIAL_DEFENDER;
-    }
+    Organism *lost = nullptr;
+    Organism *win = nullptr;
 
-    std::cout << *organisms_[attacker_id] << " is attacking " << *organisms_[defender_id] << '\n';
-
-    int winner_id, loser_id;
-
-    if (organisms_[attacker_id]->GetStr() >= organisms_[defender_id]->GetStr()) {
-        winner_id = attacker_id;
-        loser_id = defender_id;
+    if (attacker->GetStr() >= defender->GetStr()) {
+        win = attacker;
+        lost = defender;
     } else {
-        winner_id = defender_id;
-        loser_id = attacker_id;
+        win = defender;
+        lost = attacker;
     }
 
-    std::cout << organisms_[loser_id]->GetType() << " died :(\n";
+    std::cout << lost->GetType() << " died :(\n";
 
-    const auto loser_pos = organisms_[loser_id]->GetPosition();
-    world_map_[loser_pos.y][loser_pos.x] = MapSprites::EMPTY;
+    lost->FreeSpace();
 
-    if (winner_id == attacker_id) {
-        const auto attacker_old_pos = organisms_[attacker_id]->GetPosition();
-        world_map_[attacker_old_pos.y][attacker_old_pos.x] = MapSprites::EMPTY;
+    if (win == attacker) {
+        attacker->FreeSpace();
 
-        organisms_[winner_id]->SetPosition(loser_pos);
-        world_map_[loser_pos.y][loser_pos.x] = organisms_[winner_id]->GetSprite();
+        win->SetPosition(lost->GetPosition());
     }
 
-    organisms_[loser_id]->SetLife(false);
+    lost->SetLife(false);
 
-    return loser_id;
+    return {ReturnCodes::OK, lost};
 }
 
 void WorldManager::Reproduce(std::vector<std::unique_ptr<Organism> > &new_babies, const std::vector<Position> &pos,
                              const OrganismTypes parent_race) {
-    auto baby = CreateBaby(pos, parent_race);
-    if (baby) {
-        new_babies.push_back(std::move(baby));
+    auto results = CreateBaby(pos, parent_race);
+
+    if (results.code == ReturnCodes::ERROR) {
+        return;
+    }
+
+    if (results.baby) {
+        new_babies.push_back(std::move(results.baby));
     }
 }
 
-std::unique_ptr<Organism> WorldManager::CreateBaby(const std::vector<Position> &positions,
-                                                   const OrganismTypes parent_race) {
+BabyResults WorldManager::CreateBaby(const std::vector<Position> &positions,
+                                     const OrganismTypes parent_race) {
     const auto c_pos = GetChildSpawnPosition(positions);
 
-    if (c_pos.x == -1 || c_pos.y == -1) {
-        std::cout << "Can't spawn an animal: : " << parent_race << " :(\n";
-        return nullptr;
+    if (!CheckMapContains(positions)) {
+        return {ReturnCodes::ERROR, nullptr};
     }
 
-    const auto parent_ids = GetOrganismIdsAtPositions(positions);
+    std::vector<Organism *> parents;
 
-    for (const auto id: parent_ids) {
-        if (parent_ids.size() == 1) {
-            std::cout << "Seed flew from: " << *organisms_[id] << '\n';
+    for (const auto [x, y]: positions) {
+        if (world_map_[y][x] != nullptr) {
+            parents.push_back(world_map_[y][x]);
+        }
+    }
+
+    for (const auto parent: parents) {
+        if (parents.size() == 1) {
+            std::cout << "Seed flew from: " << *parent << '\n';
         } else {
-            std::cout << "Parent: " << *organisms_[id] << '\n';
+            std::cout << "Parent: " << *parent << '\n';
         }
 
-        organisms_[id]->SetActive(true);
+        parent->SetActive(true);
     }
 
-    if (parent_ids.size() == 2) {
+    if (parents.size() == 2) {
         auto child = SpawnAnimals(parent_race, c_pos);
 
         if (!child) {
             std::cerr << "Error while spawning child\n";
-            return nullptr;
+            return {ReturnCodes::ERROR, nullptr};
         }
         std::cout << "New child: " << *child << '\n';
         child->Render();
-        return child;
+        return {ReturnCodes::OK, std::move(child)};
     }
 
-    if (parent_ids.size() == 1) {
+    if (parents.size() == 1) {
         auto small_plant = SpawnAnimals(parent_race, c_pos);
 
         if (!small_plant) {
             std::cerr << "Error while sowing plants\n";
-            return nullptr;
+            return {ReturnCodes::ERROR, nullptr};
         }
         small_plant->Render();
-        return small_plant;
+        return {ReturnCodes::OK, std::move(small_plant)};
     }
-    return nullptr;
+    return {ReturnCodes::ERROR, nullptr};
 }
 
-void WorldManager::CreateFight(std::vector<int> &losers, const std::unique_ptr<Organism> &organism,
+void WorldManager::CreateFight(std::vector<Organism *> &losers, const std::unique_ptr<Organism> &organism,
                                const std::vector<Position> &pos) {
     bool success = true;
-    const auto loser_id = GetFightLosersId(pos);
+    auto [code, loser] = GetFightLosers(pos);
 
-    if (loser_id == ReturnCodes::ERROR) {
+    if (loser == nullptr) {
         success = false;
     }
 
-    if (loser_id == ReturnCodes::SPECIAL_ABILITY) {
+    if (code == ReturnCodes::SPECIAL_ABILITY) {
         organism->SpecialAbility();
-        success = false;
+        return;
     }
 
     // no fight defender used special escape / deflect ability
-    if (loser_id == ReturnCodes::SPECIAL_DEFENDER) {
-        success = false;
+    if (code == ReturnCodes::SPECIAL_DEFENDER) {
+        return;
     }
 
-    if (success) {
-        losers.push_back(loser_id);
+    if (loser != nullptr) {
+        losers.push_back(loser);
     }
 }
 
@@ -269,7 +286,7 @@ void WorldManager::ResetActivityAllOrganisms() {
 void WorldManager::Update() {
     ResetActivityAllOrganisms();
     std::vector<std::unique_ptr<Organism> > new_babies;
-    std::vector<int> losers;
+    std::vector<Organism *> losers;
 
     for (const auto &organism: organisms_) {
         constexpr int time_period = 1;
@@ -302,7 +319,7 @@ void WorldManager::Update() {
     bool need_sort = false;
 
     const bool added = AddOrganisms(new_babies);
-    const bool deleted = DeleteOrganismsByIds(losers);
+    const bool deleted = DeleteOrganisms(losers);
 
     need_sort = added || deleted;
 
@@ -334,15 +351,16 @@ bool CheckDelete(const int id) {
     return true;
 }
 
-bool WorldManager::DeleteOrganismsByIds(std::vector<int> &delete_ids) {
-    if (delete_ids.empty()) {
+bool WorldManager::DeleteOrganisms(std::vector<Organism *> &dead) {
+    if (dead.empty()) {
         return false;
     }
 
-    std::sort(delete_ids.rbegin(), delete_ids.rend());
-    for (const auto loser: delete_ids) {
-        if (CheckDelete(loser)) {
-            organisms_.erase(organisms_.begin() + loser);
+    for (auto &dead_org: dead) {
+        if (dead_org != nullptr) {
+            std::erase_if(organisms_, [dead_org](const std::unique_ptr<Organism> &org) {
+                return org.get() == dead_org;
+            });
         }
     }
 
@@ -357,7 +375,11 @@ void WorldManager::Render() {
     for (const auto &row: world_map_) {
         std::cout << " | ";
         for (const auto tile: row) {
-            std::cout << tile << " | ";
+            if (tile) {
+                std::cout << tile->GetSprite() << " | ";
+            } else {
+                std::cout << MapSprites::EMPTY << " | ";
+            }
         }
         std::cout << std::endl;
     }
@@ -383,12 +405,12 @@ std::unique_ptr<Organism> WorldManager::SpawnAnimals(const OrganismTypes type, c
         case OrganismTypes::ANTELOPE: {
             return std::make_unique<Antelope>(world_map_, spawn_pos);
         }
-        // case OrganismTypes::GRASS: {
-        //     return std::make_unique<Grass>(world_map_, spawn_pos);
-        // }
-        // case OrganismTypes::SOWTHISTLE: {
-        //     return std::make_unique<SowThistle>(world_map_, spawn_pos);
-        // }
+        case OrganismTypes::GRASS: {
+            return std::make_unique<Grass>(world_map_, spawn_pos);
+        }
+        case OrganismTypes::SOWTHISTLE: {
+            return std::make_unique<SowThistle>(world_map_, spawn_pos);
+        }
         default: {
             std::cerr << "Unknown AnimalType" << std::endl;
         }

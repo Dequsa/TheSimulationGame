@@ -13,7 +13,6 @@ add_executable(C__1 main.cpp
         Animals.h
         Plants.cpp
         Plants.h
-        Matrix.cpp
         Matrix.h
         Animals/Wolf.cpp
         Animals/Wolf.h

@@ -15,7 +15,7 @@ struct UpdateData;
 class Organism {
 protected:
     static uint32_t global_id_counter_;
-    std::vector<std::vector<char> > &world_map_;
+    std::vector<std::vector<Organism*> > &world_map_;
     Position pos_{};
     uint32_t id_{};
     uint8_t str_{};
@@ -28,9 +28,7 @@ protected:
     OrganismTypes type_{};
 
 public:
-    // Organism(std::vector<std::vector<char> > &world_map, const int &str, const int &init);
-
-    Organism(std::vector<std::vector<char> > &world_map, const AnimalData &data,
+    Organism(std::vector<std::vector<Organism*> > &world_map, const AnimalData &data,
              const Position &pos) : world_map_(world_map),
                                     pos_(pos),
                                     str_(data.str),
@@ -43,7 +41,7 @@ public:
         id_ = global_id_counter_++;
     }
 
-    Organism(std::vector<std::vector<char> > &world_map, const PlantData &data,
+    Organism(std::vector<std::vector<Organism*> > &world_map, const PlantData &data,
              const Position &pos) : world_map_(world_map),
                                     pos_(pos),
                                     str_(data.str),
@@ -70,6 +68,8 @@ public:
     DIRECTIONS GetMoveDirection() const;
 
     Position SetMovementVector(const DIRECTIONS dir) const;
+
+    void FreeSpace();
 
     // organism getters
     Position GetPosition() const;

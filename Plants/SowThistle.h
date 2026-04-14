@@ -9,7 +9,7 @@
 namespace SOWTHISTLE {
     constexpr int STR = 0;
     constexpr char SPRITE = 'H';
-    //constexpr auto TYPE =  OrganismTypes::GRASS;
+    constexpr auto TYPE =  OrganismTypes::GRASS;
     constexpr int MAX_TRIES = 3;
 }
 
@@ -17,10 +17,10 @@ class SowThistle final: public Plants  {
     static constexpr  PlantData data_ = {
         SOWTHISTLE::STR,
         SOWTHISTLE::SPRITE,
-        //SOWTHISTLE::TYPE
+        SOWTHISTLE::TYPE
     };
 public:
-    SowThistle(std::vector<std::vector<char> > &world_map,  const Position &spawn_pos) : Plants(world_map, data_, spawn_pos) {}
+    SowThistle(std::vector<std::vector<Organism*> > &world_map,  const Position &spawn_pos) : Plants(world_map, data_, spawn_pos) {}
 
     InteractionTypes CheckCollision() override;
 

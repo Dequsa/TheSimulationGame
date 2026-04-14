@@ -16,6 +16,12 @@ struct Position {
         return *this;
     }
 
+    Position &operator*=(const int n) {
+        this->x *= n;
+        this->y *= n;
+        return *this;
+    }
+
     Position operator+(const Position &that) const {
         Position res{};
         res.x = this->x + that.x;
@@ -51,8 +57,8 @@ enum class OrganismTypes {
     FOX, // 2
     TURTLE, // 3
     ANTELOPE, // 4
-    // GRASS,
-    // SOWTHISTLE,
+    GRASS,
+    SOWTHISTLE,
     NONE // can be also used as count of types
 };
 

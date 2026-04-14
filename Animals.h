@@ -26,9 +26,11 @@ protected:
 
     void Move();
 
+    virtual void MoveToPosition(const Position &pos);
+
 public:;
 
-    Animal(std::vector<std::vector<char> > &world_map, const AnimalData &data,
+    Animal(std::vector<std::vector<Organism*> > &world_map, const AnimalData &data,
            const Position &spawn_pos) : Organism(world_map, data, spawn_pos){
     }
 

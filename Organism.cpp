@@ -3,7 +3,7 @@
 uint32_t Organism::global_id_counter_ = 0;
 
 Organism::~Organism() {
-    world_map_[pos_.y][pos_.x] = MapSprites::EMPTY;
+    world_map_[pos_.y][pos_.x] = nullptr;
 }
 
 bool Organism::CheckIfMovingPositionIsCorner(const DIRECTIONS dir) const {
@@ -63,9 +63,9 @@ void Organism::SetLife(const bool what) {
 }
 
 void Organism::SetPosition(const Position &pos) {
-    world_map_[pos_.y][pos_.x] = MapSprites::EMPTY;
+    world_map_[pos_.y][pos_.x] = nullptr;
     pos_ = pos;
-    world_map_[pos_.y][pos_.x] = sprite_;
+    world_map_[pos_.y][pos_.x] = this;
 }
 
 void Organism::AgeUp(const int n) {
@@ -136,4 +136,8 @@ Position Organism::SetMovementVector(const DIRECTIONS dir) const {
         }
     }
     return move;
+}
+
+void Organism::FreeSpace() {
+    world_map_[pos_.y][pos_.x] = nullptr;
 }

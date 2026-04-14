@@ -33,14 +33,21 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Animals.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Animals.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Animals.h" beforeDir="false" afterPath="$PROJECT_DIR$/Animals.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Animals/Antelope.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Animals/Antelope.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Animals/Antelope.h" beforeDir="false" afterPath="$PROJECT_DIR$/Animals/Antelope.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Animals/Fox.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Animals/Fox.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Animals/Fox.h" beforeDir="false" afterPath="$PROJECT_DIR$/Animals/Fox.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Animals/Sheep.h" beforeDir="false" afterPath="$PROJECT_DIR$/Animals/Sheep.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Animals/Turtle.h" beforeDir="false" afterPath="$PROJECT_DIR$/Animals/Turtle.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Animals/Wolf.h" beforeDir="false" afterPath="$PROJECT_DIR$/Animals/Wolf.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Matrix.cpp" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Organism.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Organism.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Organism.h" beforeDir="false" afterPath="$PROJECT_DIR$/Organism.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plants.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plants.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plants.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plants.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plants/Grass.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plants/Grass.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plants/SowThistle.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plants/SowThistle.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plants/SowThistle.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plants/SowThistle.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Utils.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Utils.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Utils.h" beforeDir="false" afterPath="$PROJECT_DIR$/Utils.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WorldManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WorldManager.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WorldManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/WorldManager.h" afterDir="false" />
@@ -709,11 +716,6 @@
           <url>file://$PROJECT_DIR$/Animals/Wolf.cpp</url>
           <line>4</line>
           <option name="timeStamp" value="1" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/WorldManager.cpp</url>
-          <line>205</line>
-          <option name="timeStamp" value="58" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

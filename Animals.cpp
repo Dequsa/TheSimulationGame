@@ -29,7 +29,7 @@ UpdateData Animal::Update() {
 
             const auto parent_pos = pos_ + move_;
 
-            data = { InteractionTypes::REPRODUCE, {pos_, parent_pos}};
+            data = {InteractionTypes::REPRODUCE, {pos_, parent_pos}};
 
             move_ = SetMovementVector(DIRECTIONS::MID_MID);
             return data;
@@ -48,7 +48,7 @@ UpdateData Animal::Update() {
 }
 
 void Animal::Render() {
-    world_map_[pos_.y][pos_.x] = sprite_;
+    world_map_[pos_.y][pos_.x] = this;
 }
 
 InteractionTypes Animal::CheckCollision() {
@@ -59,21 +59,28 @@ InteractionTypes Animal::CheckCollision() {
         return InteractionTypes::NONE;
     }
 
-    const char sprite_on_map = world_map_[y][x];
+    const Organism *target = world_map_[y][x];
 
-    if (sprite_on_map == sprite_) {
-        return InteractionTypes::REPRODUCE;
+    if (target == nullptr) {
+        return InteractionTypes::MOVE;
     }
 
-    if (sprite_on_map == MapSprites::EMPTY) {
-        return InteractionTypes::MOVE;
+    if (target->GetType() == type_) {
+        return InteractionTypes::REPRODUCE;
     }
 
     return InteractionTypes::FIGHT;
 }
 
 void Animal::Move() {
-    world_map_[pos_.y][pos_.x] = MapSprites::EMPTY;
+    world_map_[pos_.y][pos_.x] = nullptr;
     pos_ += move_;
-    world_map_[pos_.y][pos_.x] = sprite_;
+    world_map_[pos_.y][pos_.x] = this;
+}
+
+void Animal::MoveToPosition(const Position &pos) {
+    world_map_[pos_.y][pos_.x] = nullptr;
+    pos_ = pos;
+    world_map_[pos_.y][pos_.x] = this;
+    move_ = {0, 0   };
 }

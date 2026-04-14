@@ -9,13 +9,13 @@
 
 class Plants : public Organism {
 public:
-    Plants(std::vector<std::vector<char> > &world_map, const PlantData &data, const Position &pos);
+    Plants(std::vector<std::vector<Organism*> > &world_map, const PlantData &data, const Position &pos);
 
     ~Plants() override = default;
 
     virtual UpdateData Update() override;
 
-    virtual bool SpecialCheck(const Organism &other) const override { return false; };
+    virtual bool SpecialCheck(const Organism &other) const override { return false; }
 
     virtual void SpecialAbility() override {}
 
