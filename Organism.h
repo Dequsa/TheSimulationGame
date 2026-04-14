@@ -22,9 +22,9 @@ protected:
     uint8_t init_{};
     int age_{};
     char sprite_{};
-    bool child_{};
     bool has_acted_{};
     bool is_alive_{};
+    Position move_;
     OrganismTypes type_{};
 
 public:
@@ -37,9 +37,21 @@ public:
                                     init_(data.init),
                                     sprite_(data.sprite),
                                     type_(data.type),
-                                    child_(true),
                                     has_acted_(true),
-                                    is_alive_(true){
+                                    is_alive_(true),
+                                    move_({0, 0}){
+        id_ = global_id_counter_++;
+    }
+
+    Organism(std::vector<std::vector<char> > &world_map, const PlantData &data,
+             const Position &pos) : world_map_(world_map),
+                                    pos_(pos),
+                                    str_(data.str),
+                                    sprite_(data.sprite),
+                                    has_acted_(true),
+                                    is_alive_(true),
+                                    type_(data.type){
+        init_ = 0;
         id_ = global_id_counter_++;
     }
 
@@ -53,6 +65,12 @@ public:
 
     virtual void SpecialAbility() {}
 
+    bool CheckIfMovingPositionIsCorner(const DIRECTIONS dir) const;
+
+    DIRECTIONS GetMoveDirection() const;
+
+    Position SetMovementVector(const DIRECTIONS dir) const;
+
     // organism getters
     Position GetPosition() const;
 
@@ -61,8 +79,6 @@ public:
     int GetInit() const;
 
     OrganismTypes GetType() const;
-
-    bool IsChild() const;
 
     bool GetActivity() const;
 

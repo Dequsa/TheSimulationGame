@@ -3,3 +3,54 @@
 //
 
 #include "Plants.h"
+
+Plants::Plants(std::vector<std::vector<char> > &world_map, const PlantData &data, const Position &pos) : Organism(world_map, data, pos) {}
+
+UpdateData Plants::Update() {
+    UpdateData data{InteractionTypes::MOVE, {{-1, -1}, {-1, -1}}};
+    const auto dir = GetMoveDirection();
+    move_ = SetMovementVector(dir);
+    switch (CheckCollision()) {
+        case InteractionTypes::REPRODUCE: {
+            if (move_.x == 0 && move_.y == 0) {
+                data.interaction = InteractionTypes::MOVE;
+                break;
+            }
+
+            const auto parent_pos = pos_;
+
+            data = { InteractionTypes::REPRODUCE, {pos_, parent_pos}};
+
+            break;
+        }
+        case InteractionTypes::NONE: {
+            data.interaction = InteractionTypes::MOVE;
+            break;
+        }
+        default: {
+            std::cerr << "Unrecognized Interaction Type" << '\n';
+            break;
+        }
+    }
+
+    return data;
+}
+
+void Plants::Render() {
+    world_map_[pos_.y][pos_.x] = sprite_;
+}
+
+InteractionTypes Plants::CheckCollision() {
+    const auto [x, y] = pos_ + move_;
+
+    const char sprite_on_map = world_map_[y][x];
+
+    if (sprite_on_map == MapSprites::EMPTY) {
+        // 12.5% chance to sow
+        if ((rand() & 7) == 0) { // 0111 = 7 (1/2 * 1/2 * 1/2)
+            return InteractionTypes::REPRODUCE;
+        }
+    }
+
+    return InteractionTypes::NONE;
+}

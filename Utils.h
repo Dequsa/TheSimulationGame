@@ -51,6 +51,7 @@ enum class OrganismTypes {
     FOX, // 2
     TURTLE, // 3
     ANTELOPE, // 4
+    GRASS,
 
     NONE // can be also used as count of types
 };
@@ -69,6 +70,12 @@ enum class InteractionTypes {
 struct AnimalData {
     const int str;
     const int init;
+    const char sprite;
+    const OrganismTypes type;
+};
+
+struct PlantData {
+    const int str;
     const char sprite;
     const OrganismTypes type;
 };

@@ -19,19 +19,12 @@ class WorldManager;
 
 class Animal : public Organism {
 protected:
-    Position move_;
-
-    bool CheckIfMovingPositionIsCorner(const DIRECTIONS dir) const;
-
-    DIRECTIONS GetMoveDirection() const;
 
     OrganismTypes GetType() const { return type_; }
 
     virtual InteractionTypes CheckCollision();
 
     void Move();
-
-    virtual Position SetMovementVector(const DIRECTIONS dir);
 
 public:;
 
@@ -46,6 +39,8 @@ public:;
     virtual bool SpecialCheck(const Organism &other) const override {return false;}
 
     virtual void SpecialAbility() override {}
+
+    virtual Position SetMovementVector(const DIRECTIONS dir) {return Organism::SetMovementVector(dir);}
 
     void Render() override;
 };
