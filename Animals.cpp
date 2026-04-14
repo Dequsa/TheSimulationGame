@@ -5,10 +5,6 @@
 #include "Animals.h"
 #include <iostream>
 
-Animal::~Animal() {
-    world_map_[pos_.y][pos_.x] = MapSprites::EMPTY;
-}
-
 UpdateData Animal::Update() {
     UpdateData data{InteractionTypes::MOVE, {{-1, -1}, {-1, -1}}};
     const auto dir = GetMoveDirection();
@@ -58,7 +54,8 @@ void Animal::Render() {
 InteractionTypes Animal::CheckCollision() {
     const auto [x, y] = pos_ + move_;
 
-    if (x == -1 || y == -1) {
+    // if animal wants to go out of bounds stop them
+    if (x < 0 || y < 0 || y >= world_map_.size() || x >= world_map_[0].size()) {
         return InteractionTypes::NONE;
     }
 

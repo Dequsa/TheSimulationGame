@@ -9,11 +9,12 @@
 #include "Animals/Sheep.h"
 #include "Animals/Turtle.h"
 #include "Plants/Grass.h"
+#include "Plants/SowThistle.h"
 
 constexpr int MAX_TRIES = 200;
 
 WorldManager::WorldManager(const int map_size, const int organism_count) : world_map_(
-    map_size, std::vector<char>(map_size, MapSprites::EMPTY)) {
+    map_size, std::vector(map_size, MapSprites::EMPTY)) {
     std::srand(time(NULL));
     // add organisms to the world_map
     for (int i = 0; i < organism_count; i++) {
@@ -114,7 +115,7 @@ Position WorldManager::GetChildSpawnPosition(const std::vector<Position> &positi
 }
 
 // position 0 is position of the one who starts the fight
-int WorldManager::GetFightLosersId(const std::vector<Position> &positions) const {
+int WorldManager::GetFightLosersId(const std::vector<Position> &positions) {
     for (const auto [x, y]: positions) {
         if (x == -1 || y == -1) {
             std::cerr << "Error while creating a fight at pos: " << x << ' ' << y << '\n';
@@ -165,8 +166,15 @@ int WorldManager::GetFightLosersId(const std::vector<Position> &positions) const
 
     std::cout << organisms_[loser_id]->GetType() << " died :(\n";
 
+    const auto loser_pos = organisms_[loser_id]->GetPosition();
+    world_map_[loser_pos.y][loser_pos.x] = MapSprites::EMPTY;
+
     if (winner_id == attacker_id) {
-        organisms_[winner_id]->SetPosition(organisms_[loser_id]->GetPosition());
+        const auto attacker_old_pos = organisms_[attacker_id]->GetPosition();
+        world_map_[attacker_old_pos.y][attacker_old_pos.x] = MapSprites::EMPTY;
+
+        organisms_[winner_id]->SetPosition(loser_pos);
+        world_map_[loser_pos.y][loser_pos.x] = organisms_[winner_id]->GetSprite();
     }
 
     organisms_[loser_id]->SetLife(false);
@@ -375,9 +383,12 @@ std::unique_ptr<Organism> WorldManager::SpawnAnimals(const OrganismTypes type, c
         case OrganismTypes::ANTELOPE: {
             return std::make_unique<Antelope>(world_map_, spawn_pos);
         }
-        case OrganismTypes::GRASS: {
-            return std::make_unique<Grass>(world_map_, spawn_pos);
-        }
+        // case OrganismTypes::GRASS: {
+        //     return std::make_unique<Grass>(world_map_, spawn_pos);
+        // }
+        // case OrganismTypes::SOWTHISTLE: {
+        //     return std::make_unique<SowThistle>(world_map_, spawn_pos);
+        // }
         default: {
             std::cerr << "Unknown AnimalType" << std::endl;
         }

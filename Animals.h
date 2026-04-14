@@ -32,7 +32,7 @@ public:;
            const Position &spawn_pos) : Organism(world_map, data, spawn_pos){
     }
 
-    ~Animal() override;
+    ~Animal() override = default;
 
     UpdateData Update() override;
 

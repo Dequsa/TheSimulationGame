@@ -21,7 +21,7 @@ public:
 
     virtual void Render() override;
 
-    InteractionTypes CheckCollision();
+    virtual InteractionTypes CheckCollision();
 };
 
 

@@ -57,7 +57,7 @@ public:
 
     Organism(const Organism &org) = default;
 
-    virtual ~Organism() = default;
+    virtual ~Organism();
 
     virtual UpdateData Update() = 0;
 
@@ -85,6 +85,8 @@ public:
     int GetAge() const;
 
     bool GetLife() const;
+
+    char GetSprite() const;
 
     // setters
     void SetChild(const bool what);

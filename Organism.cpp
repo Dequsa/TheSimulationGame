@@ -2,18 +2,21 @@
 
 uint32_t Organism::global_id_counter_ = 0;
 
+Organism::~Organism() {
+    world_map_[pos_.y][pos_.x] = MapSprites::EMPTY;
+}
+
 bool Organism::CheckIfMovingPositionIsCorner(const DIRECTIONS dir) const {
-    const int max_x = world_map_.size() - 1;
-    const int max_y = world_map_[0].size() - 1;
+    // 1. Fixed the swapped X and Y axis bounds
+    const int max_x = world_map_[0].size() - 1;
+    const int max_y = world_map_.size() - 1;
 
-    const bool moving_left = (dir == DIRECTIONS::BOT_LEFT || dir == DIRECTIONS::MID_LEFT || dir == DIRECTIONS::UP_LEFT);
-    const bool moving_right = (dir == DIRECTIONS::BOT_RIGHT || dir == DIRECTIONS::MID_RIGHT || dir == DIRECTIONS::UP_RIGHT);
+    const auto [x, y] = SetMovementVector(dir);
+    const int target_x = pos_.x + x;
+    const int target_y = pos_.y + y;
 
-    const bool moving_up = (dir == DIRECTIONS::UP_LEFT || dir == DIRECTIONS::UP_MID || dir == DIRECTIONS::UP_RIGHT);
-    const bool moving_down = (dir == DIRECTIONS::BOT_LEFT || dir == DIRECTIONS::BOT_MID || dir == DIRECTIONS::BOT_RIGHT);
-
-    const bool hit_x_edge = (pos_.x <= 0 && moving_left) || (pos_.x >= max_x && moving_right);
-    const bool hit_y_edge = (pos_.y <= 0 && moving_up) || (pos_.y >= max_y && moving_down);
+    const bool hit_x_edge = (target_x < 0) || (target_x > max_x);
+    const bool hit_y_edge = (target_y < 0) || (target_y > max_y);
 
     return hit_x_edge || hit_y_edge;
 }
@@ -79,6 +82,10 @@ int Organism::GetAge() const {
 
 bool Organism::GetLife() const {
     return is_alive_;
+}
+
+char Organism::GetSprite() const {
+    return sprite_;
 }
 
 Position Organism::SetMovementVector(const DIRECTIONS dir) const {

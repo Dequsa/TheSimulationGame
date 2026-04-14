@@ -51,8 +51,8 @@ enum class OrganismTypes {
     FOX, // 2
     TURTLE, // 3
     ANTELOPE, // 4
-    GRASS,
-
+    // GRASS,
+    // SOWTHISTLE,
     NONE // can be also used as count of types
 };
 

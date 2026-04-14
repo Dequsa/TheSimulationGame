@@ -36,7 +36,7 @@ class WorldManager {
     void CreateFight(std::vector<int> &loosers, const std::unique_ptr<Organism> &organism,
                      const std::vector<Position> &pos);
 
-    int GetFightLosersId(const std::vector<Position> &positions) const;
+    int GetFightLosersId(const std::vector<Position> &positions);
 
     void Reproduce(std::vector<std::unique_ptr<Organism> > &new_babies, const std::vector<Position> &pos, const OrganismTypes parent_race);
 

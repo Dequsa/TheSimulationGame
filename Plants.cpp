@@ -43,6 +43,10 @@ void Plants::Render() {
 InteractionTypes Plants::CheckCollision() {
     const auto [x, y] = pos_ + move_;
 
+    if (x < 0 || y < 0 || y >= world_map_.size() || x >= world_map_[0].size()) {
+        return InteractionTypes::NONE;
+    }
+
     const char sprite_on_map = world_map_[y][x];
 
     if (sprite_on_map == MapSprites::EMPTY) {

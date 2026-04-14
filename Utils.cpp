@@ -19,8 +19,10 @@ std::ostream &operator<<(std::ostream &os, const OrganismTypes type) {
             break;
         case OrganismTypes::NONE: os << "None";
             break;
-        case OrganismTypes::GRASS: os << "Grass";
-            break;
+        // case OrganismTypes::GRASS: os << "Grass";
+        //     break;
+        // case OrganismTypes::SOWTHISTLE: os << "Sow Thistle";
+        //     break;
         default:
             break;
     }
