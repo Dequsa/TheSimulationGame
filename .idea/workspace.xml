@@ -29,24 +29,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="da181c08-0b1f-47d0-b404-23907a8a0a4a" name="Changes" comment="Fixed invalid fighters ids amount">
-      <change afterPath="$PROJECT_DIR$/Plants/Belladona.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Plants/Belladona.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Plants/Guarana.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Plants/Guarana.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Organism.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Organism.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Organism.h" beforeDir="false" afterPath="$PROJECT_DIR$/Organism.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plants.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plants.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plants.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plants.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plants/SowThistle.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plants/SowThistle.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Utils.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Utils.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Utils.h" beforeDir="false" afterPath="$PROJECT_DIR$/Utils.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WorldManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WorldManager.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/WorldManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/WorldManager.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
-    </list>
+    <list default="true" id="da181c08-0b1f-47d0-b404-23907a8a0a4a" name="Changes" comment="Fixed invalid fighters ids amount" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
