@@ -24,7 +24,7 @@ class Turtle final : public Animal {
     bool is_moving_{};
 
 public:
-    Turtle(std::vector<std::vector<char> > &world_map, const Position &spawn_pos) : Animal(
+    Turtle(std::vector<std::vector<Organism*> > &world_map, const Position &spawn_pos) : Animal(
         world_map, wolf_data_, spawn_pos) {
     }
 

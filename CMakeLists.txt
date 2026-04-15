@@ -13,7 +13,6 @@ add_executable(C__1 main.cpp
         Animals.h
         Plants.cpp
         Plants.h
-        Matrix.cpp
         Matrix.h
         Animals/Wolf.cpp
         Animals/Wolf.h
@@ -27,6 +26,17 @@ add_executable(C__1 main.cpp
         Animals/Antelope.h
         Utils.h
         Utils.cpp
+<<<<<<< HEAD
         Animals/Human.cpp
         Animals/Human.h
+=======
+        Plants/Grass.cpp
+        Plants/Grass.h
+        Plants/SowThistle.cpp
+        Plants/SowThistle.h
+        Plants/Guarana.cpp
+        Plants/Guarana.h
+        Plants/Belladona.cpp
+        Plants/Belladona.h
+>>>>>>> bea068097b7c83c31810fd9085407999174f7068
 )

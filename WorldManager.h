@@ -12,7 +12,6 @@
 class Organism;
 struct AnimalData;
 struct UpdateData;
-
 namespace ReturnCodes {
     constexpr int OK = 0;
     constexpr int ERROR = -1;
@@ -20,12 +19,24 @@ namespace ReturnCodes {
     constexpr int SPECIAL_DEFENDER = -3;
 }
 
+struct FightResults {
+    int code{};
+    Organism* loser = nullptr;
+};
+
+struct BabyResults {
+    int code{};
+    std::unique_ptr<Organism> baby;
+};
+
 class WorldManager {
     std::vector<std::unique_ptr<Organism> > organisms_;
-    std::vector<std::vector<char> > world_map_;
+    std::vector<std::vector<Organism*> > world_map_;
 
     // special abilities
     bool CheckIfAttackerIsFox(const Organism &org1, const Organism &org2);
+
+    bool CheckMapContains(const std::vector<Position> &positions) const;
 
     Position ChooseAndSetSpawnPoint() const;
 
@@ -33,17 +44,20 @@ class WorldManager {
 
     std::vector<int> GetOrganismIdsAtPositions(const std::vector<Position> &positions) const;
 
-    void CreateFight(std::vector<int> &loosers, const std::unique_ptr<Organism> &organism,
-                     const std::vector<Position> &pos);
+    void CreateFight(std::vector<Organism*> &losers, const std::unique_ptr<Organism> &organism, const std::vector<Position> &pos);
 
-    int GetFightLoosersId(const std::vector<Position> &positions) const;
+    FightResults GetFightLosers(const std::vector<Position> &positions);
 
     void Reproduce(std::vector<std::unique_ptr<Organism> > &new_babies, const std::vector<Position> &pos, const OrganismTypes parent_race);
 
-    std::unique_ptr<Organism> CreateBaby(const std::vector<Position> &positions, OrganismTypes parent_race);
+    BabyResults MakeLife(const OrganismTypes parent_race, const Position c_pos);
+
+    BabyResults SowPlant(const OrganismTypes parent_race, const Position c_pos);
+
+    BabyResults CreateBaby(const std::vector<Position> &positions, OrganismTypes parent_race);
 
     bool AddOrganisms(std::vector<std::unique_ptr<Organism> > &new_organisms);
-    bool DeleteOrganismsByIds(std::vector<int> &delete_ids);
+    bool DeleteOrganisms(std::vector<Organism*> &dead);
 
     void ResetActivityAllOrganisms();
 
@@ -62,7 +76,7 @@ public:
 
     void Render();
 
-    std::vector<std::vector<char> > &GetWorldMap() { return world_map_; }
+    std::vector<std::vector<Organism*> > &GetWorldMap() { return world_map_; }
 };
 
 

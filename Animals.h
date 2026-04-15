@@ -19,11 +19,6 @@ class WorldManager;
 
 class Animal : public Organism {
 protected:
-    Position move_;
-
-    bool CheckIfMovingPositionIsCorner(const DIRECTIONS dir) const;
-
-    DIRECTIONS GetMoveDirection() const;
 
     OrganismTypes GetType() const { return type_; }
 
@@ -31,21 +26,23 @@ protected:
 
     void Move();
 
-    virtual Position SetMovementVector(const DIRECTIONS dir);
+    virtual void MoveToPosition(const Position &pos);
 
 public:;
 
-    Animal(std::vector<std::vector<char> > &world_map, const AnimalData &data,
+    Animal(std::vector<std::vector<Organism*> > &world_map, const AnimalData &data,
            const Position &spawn_pos) : Organism(world_map, data, spawn_pos){
     }
 
-    ~Animal() override;
+    ~Animal() override = default;
 
     UpdateData Update() override;
 
     virtual bool SpecialCheck(const Organism &other) const override {return false;}
 
     virtual void SpecialAbility() override {}
+
+    virtual Position SetMovementVector(const DIRECTIONS dir) {return Organism::SetMovementVector(dir);}
 
     void Render() override;
 };

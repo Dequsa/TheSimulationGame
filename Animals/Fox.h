@@ -10,21 +10,22 @@ namespace FOX{
     constexpr int STR = 3;
     constexpr int INIT = 7;
     constexpr char SPRITE = 'F';
+    constexpr auto TYPE = OrganismTypes::FOX;
 }
 
 class Fox final : public Animal {
-    static constexpr AnimalData Fox_data_ = {
+    static constexpr AnimalData data_ = {
         FOX::STR,
         FOX::INIT,
         FOX::SPRITE,
-        OrganismTypes::FOX
+        FOX::TYPE
     };
     bool is_moving_{};
     Position last_pos_{};
 
 public:
-    Fox(std::vector<std::vector<char> > &world_map, const Position &spawn_pos) : Animal(
-        world_map, Fox_data_, spawn_pos) {
+    Fox(std::vector<std::vector<Organism*> > &world_map, const Position &spawn_pos) : Animal(
+        world_map, data_, spawn_pos) {
     }
 
     ~Fox() override = default;
