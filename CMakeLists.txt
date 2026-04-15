@@ -27,4 +27,6 @@ add_executable(C__1 main.cpp
         Animals/Antelope.h
         Utils.h
         Utils.cpp
+        Animals/Human.cpp
+        Animals/Human.h
 )
