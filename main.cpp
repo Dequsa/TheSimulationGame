@@ -5,9 +5,10 @@ int main() {
     std::cin >> map_size >> org_num;
     std::string input;
     WorldManager wm(map_size, org_num);
+    std::getline(std::cin, input);
     do {
-        std::getline(std::cin, input);
         wm.Update();
+        std::getline(std::cin, input);
     } while (input != "END");
     return 0;
 }

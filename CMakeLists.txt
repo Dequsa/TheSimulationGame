@@ -30,4 +30,8 @@ add_executable(C__1 main.cpp
         Plants/Grass.h
         Plants/SowThistle.cpp
         Plants/SowThistle.h
+        Plants/Guarana.cpp
+        Plants/Guarana.h
+        Plants/Belladona.cpp
+        Plants/Belladona.h
 )

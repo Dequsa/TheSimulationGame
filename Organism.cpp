@@ -68,6 +68,10 @@ void Organism::SetPosition(const Position &pos) {
     world_map_[pos_.y][pos_.x] = this;
 }
 
+void Organism::AddStr(const int n) {
+    str_ += n;
+}
+
 void Organism::AgeUp(const int n) {
     age_ += n;
 }

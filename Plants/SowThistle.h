@@ -9,7 +9,7 @@
 namespace SOWTHISTLE {
     constexpr int STR = 0;
     constexpr char SPRITE = 'H';
-    constexpr auto TYPE =  OrganismTypes::GRASS;
+    constexpr auto TYPE =  OrganismTypes::SOWTHISTLE;
     constexpr int MAX_TRIES = 3;
 }
 

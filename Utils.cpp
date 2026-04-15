@@ -23,6 +23,10 @@ std::ostream &operator<<(std::ostream &os, const OrganismTypes type) {
             break;
         case OrganismTypes::SOWTHISTLE: os << "Sow Thistle";
             break;
+        case OrganismTypes::GUARANA: os << "Guarana";
+            break;
+        case OrganismTypes::BELLADONNA: os << "Belladonna";
+            break;
         default:
             break;
     }
@@ -37,6 +41,6 @@ std::ostream &operator<<(std::ostream &os, const Position &pos) {
 
 
 std::ostream &operator<<(std::ostream &os, const Organism &org) {
-    os << org.GetType() << " at position: " << org.GetPosition() << " age: " << org.GetAge() << " str: " << org.GetStr() << " init: " << org.GetInit();
+    os << org.GetType() << " at position: " << org.GetPosition() << " age: " << org.GetAge() << " str: " << org.GetStr()            << " init: " << org.GetInit();
     return os;
 }

@@ -8,7 +8,9 @@
 #include "Animals/Fox.h"
 #include "Animals/Sheep.h"
 #include "Animals/Turtle.h"
+#include "Plants/Belladona.h"
 #include "Plants/Grass.h"
+#include "Plants/Guarana.h"
 #include "Plants/SowThistle.h"
 
 constexpr int MAX_TRIES = 200;
@@ -30,9 +32,8 @@ WorldManager::WorldManager(const int map_size, const int organism_count) : world
         organisms_.push_back(SpawnAnimals(static_cast<OrganismTypes>(animal_num), spawn_pos));
     }
     SortOrganisms();
-    for (const auto &org: organisms_) {
-        org->Render();
-    }
+
+    Render();
 }
 
 WorldManager::~WorldManager() {
@@ -91,8 +92,6 @@ bool WorldManager::CheckMapContains(const std::vector<Position> &positions) cons
         }
     }
 
-    if (positions.size() < 2) return false;
-
     return true;
 }
 
@@ -144,6 +143,8 @@ FightResults WorldManager::GetFightLosers(const std::vector<Position> &positions
     if (!CheckMapContains(positions)) {
         return {ReturnCodes::ERROR, nullptr};
     }
+
+    if (positions.size() < 2) return {ReturnCodes::ERROR, nullptr};
 
     auto attacker = world_map_[positions[0].y][positions[0].x];
     auto defender = world_map_[positions[1].y][positions[1].x];
@@ -202,8 +203,39 @@ void WorldManager::Reproduce(std::vector<std::unique_ptr<Organism> > &new_babies
     }
 }
 
-BabyResults WorldManager::CreateBaby(const std::vector<Position> &positions,
-                                     const OrganismTypes parent_race) {
+BabyResults WorldManager::MakeLife(const OrganismTypes parent_race, const Position c_pos) {
+
+    auto child = SpawnAnimals(parent_race, c_pos);
+
+    if (!child) {
+        std::cerr << "Error while spawning child\n";
+        return {ReturnCodes::ERROR, nullptr};
+    }
+
+    std::cout << "New child: " << *child << '\n';
+
+    child->Render();
+
+    return {ReturnCodes::OK, std::move(child)};
+}
+
+BabyResults WorldManager::SowPlant(const OrganismTypes parent_race,
+                                   const Position c_pos) {
+    auto small_plant = SpawnAnimals(parent_race, c_pos);
+
+    if (!small_plant) {
+        std::cerr << "Error while sowing plants\n";
+        return {ReturnCodes::ERROR, nullptr};
+    }
+
+    std::cout << "New plant: " << *small_plant << '\n';
+
+    small_plant->Render();
+
+    return {ReturnCodes::OK, std::move(small_plant)};
+}
+
+BabyResults WorldManager::CreateBaby(const std::vector<Position> &positions, const OrganismTypes parent_race) {
     const auto c_pos = GetChildSpawnPosition(positions);
 
     if (!CheckMapContains(positions)) {
@@ -229,37 +261,22 @@ BabyResults WorldManager::CreateBaby(const std::vector<Position> &positions,
     }
 
     if (parents.size() == 2) {
-        auto child = SpawnAnimals(parent_race, c_pos);
-
-        if (!child) {
-            std::cerr << "Error while spawning child\n";
-            return {ReturnCodes::ERROR, nullptr};
-        }
-        std::cout << "New child: " << *child << '\n';
-        child->Render();
-        return {ReturnCodes::OK, std::move(child)};
+        return MakeLife(parent_race, c_pos);
     }
 
     if (parents.size() == 1) {
-        auto small_plant = SpawnAnimals(parent_race, c_pos);
-
-        if (!small_plant) {
-            std::cerr << "Error while sowing plants\n";
-            return {ReturnCodes::ERROR, nullptr};
-        }
-        small_plant->Render();
-        return {ReturnCodes::OK, std::move(small_plant)};
+        return SowPlant(parent_race, c_pos);
     }
+
     return {ReturnCodes::ERROR, nullptr};
 }
 
 void WorldManager::CreateFight(std::vector<Organism *> &losers, const std::unique_ptr<Organism> &organism,
                                const std::vector<Position> &pos) {
-    bool success = true;
     auto [code, loser] = GetFightLosers(pos);
 
     if (loser == nullptr) {
-        success = false;
+        return;
     }
 
     if (code == ReturnCodes::SPECIAL_ABILITY) {
@@ -272,9 +289,7 @@ void WorldManager::CreateFight(std::vector<Organism *> &losers, const std::uniqu
         return;
     }
 
-    if (loser != nullptr) {
-        losers.push_back(loser);
-    }
+    losers.push_back(loser);
 }
 
 void WorldManager::ResetActivityAllOrganisms() {
@@ -410,6 +425,12 @@ std::unique_ptr<Organism> WorldManager::SpawnAnimals(const OrganismTypes type, c
         }
         case OrganismTypes::SOWTHISTLE: {
             return std::make_unique<SowThistle>(world_map_, spawn_pos);
+        }
+        case OrganismTypes::GUARANA: {
+            return std::make_unique<Guarana>(world_map_, spawn_pos);
+        }
+        case OrganismTypes::BELLADONNA: {
+            return std::make_unique<Belladonna>(world_map_, spawn_pos);
         }
         default: {
             std::cerr << "Unknown AnimalType" << std::endl;

@@ -59,7 +59,8 @@ public:
 
     virtual UpdateData Update() = 0;
 
-    virtual bool SpecialCheck(const Organism &other) const = 0;
+    virtual bool SpecialCheck(const Organism &other) const{return false;}
+    virtual bool SpecialCheck(Organism &other) {return false;}
 
     virtual void SpecialAbility() {}
 
@@ -96,6 +97,8 @@ public:
     void SetLife(const bool what);
 
     void SetPosition(const Position &pos);
+
+    void AddStr(const int n);
 
     void AgeUp(int n);
 

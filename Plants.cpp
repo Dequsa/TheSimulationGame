@@ -19,9 +19,7 @@ UpdateData Plants::Update() {
                 break;
             }
 
-            const auto parent_pos = pos_;
-
-            data = {InteractionTypes::REPRODUCE, {pos_, parent_pos}};
+            data = {InteractionTypes::REPRODUCE, {pos_}};
 
             break;
         }
@@ -51,9 +49,9 @@ InteractionTypes Plants::CheckCollision() {
 
     const Organism *target = world_map_[y][x];
 
-    if (target) {
+    if (target == nullptr) {
         // 12.5% chance to sow
-        if ((rand() & 7) == 0) {
+        if ((rand() & 7) == 0)  {
             // 0111 = 7 (1/2 * 1/2 * 1/2)
             return InteractionTypes::REPRODUCE;
         }

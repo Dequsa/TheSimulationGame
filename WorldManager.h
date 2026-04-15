@@ -50,6 +50,10 @@ class WorldManager {
 
     void Reproduce(std::vector<std::unique_ptr<Organism> > &new_babies, const std::vector<Position> &pos, const OrganismTypes parent_race);
 
+    BabyResults MakeLife(const OrganismTypes parent_race, const Position c_pos);
+
+    BabyResults SowPlant(const OrganismTypes parent_race, const Position c_pos);
+
     BabyResults CreateBaby(const std::vector<Position> &positions, OrganismTypes parent_race);
 
     bool AddOrganisms(std::vector<std::unique_ptr<Organism> > &new_organisms);

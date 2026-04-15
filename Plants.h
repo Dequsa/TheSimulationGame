@@ -15,7 +15,7 @@ public:
 
     virtual UpdateData Update() override;
 
-    virtual bool SpecialCheck(const Organism &other) const override { return false; }
+    virtual bool SpecialCheck(Organism &other) override { return false; }
 
     virtual void SpecialAbility() override {}
 
