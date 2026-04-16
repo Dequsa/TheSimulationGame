@@ -18,8 +18,8 @@ protected:
     std::vector<std::vector<Organism*> > &world_map_;
     Position pos_{};
     uint32_t id_{};
-    uint8_t str_{};
-    uint8_t init_{};
+    int str_{};
+    int init_{};
     int age_{};
     char sprite_{};
     bool has_acted_{};
@@ -75,6 +75,8 @@ public:
     void FreeSpace();
 
     virtual void Print(std::ostream &os) const;
+
+    virtual std::ostream &Save(std::ostream &os) const;
 
     // organism getters
     Position GetPosition() const;

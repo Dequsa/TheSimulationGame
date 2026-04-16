@@ -152,5 +152,10 @@ void Organism::FreeSpace() {
 }
 
 void Organism::Print(std::ostream &os) const {
-        os << GetType() << " at position: " << GetPosition() << " age: " << GetAge() << " str: " << GetStr() << " init: " << GetInit();
+    os << type_ << " at position: " << pos_ << " age: " << age_ << " str: " << str_ << " init: " << init_;
+}
+
+std::ostream &Organism::Save(std::ostream &os) const {
+    os << static_cast<int>(type_) << ' ' << pos_.y << ' ' << pos_.x << ' ' << str_ << ' ' << init_ << '\n';
+    return os;
 }

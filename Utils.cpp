@@ -50,9 +50,3 @@ std::ostream &operator<<(std::ostream &os, const Organism &org) {
     org.Print(os);
     return os;
 }
-
-std::ostream & operator<<(std::ostream &os, const Plants &org) {
-    // os << org.GetType() << " at position: " << org.GetPosition() << " age: " << org.GetAge();
-    org.Print(os);
-    return os;
-}

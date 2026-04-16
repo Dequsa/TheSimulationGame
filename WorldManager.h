@@ -68,18 +68,25 @@ class WorldManager {
 
     void KillArea(std::vector<Organism*> &losers, const std::vector<Position> &positions);
 
+    std::unique_ptr<Organism> SpawnAnimals(const OrganismTypes type, const Position &spawn_pos);
+
+
 public:
-    WorldManager(const int map_size, const int organism_count);
+    WorldManager() = default;
+
+    WorldManager(const int map_size, const int organism_count, const bool load);
+
+    WorldManager(WorldManager &world_manager) = default;
+
 
     ~WorldManager();
 
-    void Update(const char key);
-
-    std::unique_ptr<Organism> SpawnAnimals(const OrganismTypes type, const Position &spawn_pos);
-
-    void KillOrganism();
+    bool Update(const char key);
 
     void Render();
+
+    bool LoadGame(const std::string &filename);
+    bool SaveGame(const std::string &filename);
 
     std::vector<std::vector<Organism*> > &GetWorldMap() { return world_map_; }
 };

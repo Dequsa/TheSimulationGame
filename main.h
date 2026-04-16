@@ -7,6 +7,8 @@
 #pragma once
 #include <iostream>
 #include <ncurses.h>
+#include <fstream>
+#include <sstream>
 #include "Organism.h"
 #include "Animals.h"
 #include "WorldManager.h"

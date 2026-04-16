@@ -106,4 +106,14 @@ namespace MapSprites {
     constexpr char EMPTY = '.';
 }
 
+namespace KEYS {
+    constexpr char SAVE = 'o';
+    constexpr char UP = 'w';
+    constexpr char DOWN = 's';
+    constexpr char LEFT = 'a';
+    constexpr char RIGHT = 'd';
+    constexpr char EXIT = 'x';
+    constexpr char ABILITY = 'f';
+}
+
 #endif //C__1_UTILS_H

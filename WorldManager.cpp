@@ -4,6 +4,7 @@
 // #include <iostream>
 #include <algorithm>
 #include <sstream>
+#include <fstream>
 #include "./Animals/Wolf.h"
 #include "Animals/Antelope.h"
 #include "Animals/Fox.h"
@@ -16,30 +17,36 @@
 #include "Plants/Hogweed.h"
 #include "Plants/SowThistle.h"
 
-WorldManager::WorldManager(const int map_size, const int organism_count) : world_map_(
+WorldManager::WorldManager(const int map_size, const int organism_count, const bool load) : world_map_(
     map_size, std::vector<Organism *>(map_size, nullptr)) {
     std::srand(time(NULL));
-    // add organisms to the world_map
-    for (int i = 0; i < organism_count; i++) {
-        Position spawn_pos = ChooseAndSetSpawnPoint();
 
-        if (spawn_pos.x == -1 || spawn_pos.y == -1) {
-            i--;
-            continue;
+    if (load) {
+        if (!LoadGame("../Saves/SaveData.txt")) return;
+        SortOrganisms();
+        Render();
+    } else {
+        for (int i = 0; i < organism_count; i++) {
+            Position spawn_pos = ChooseAndSetSpawnPoint();
+
+            if (spawn_pos.x == -1 || spawn_pos.y == -1) {
+                i--;
+                continue;
+            }
+
+            int animal_num = 0;
+            if (i == 0) {
+                animal_num = static_cast<int>(OrganismTypes::HUMAN);
+            } else {
+                animal_num = rand() % static_cast<int>(OrganismTypes::NONE);
+            }
+
+            organisms_.push_back(SpawnAnimals(static_cast<OrganismTypes>(animal_num), spawn_pos));
         }
+        SortOrganisms();
 
-        int animal_num = 0;
-        if (i == 0) {
-            animal_num = static_cast<int>(OrganismTypes::HUMAN);
-        } else {
-            animal_num = rand() % static_cast<int>(OrganismTypes::NONE);
-        }
-
-        organisms_.push_back(SpawnAnimals(static_cast<OrganismTypes>(animal_num), spawn_pos));
+        Render();
     }
-    SortOrganisms();
-
-    Render();
 }
 
 WorldManager::~WorldManager() {
@@ -336,7 +343,12 @@ void WorldManager::KillArea(std::vector<Organism *> &losers, const std::vector<P
 }
 
 
-void WorldManager::Update(const char key) {
+bool WorldManager::Update(const char key) {
+    if (key == KEYS::SAVE) {
+        SaveGame("../Saves/SaveData.txt");
+        return false;
+    }
+
     ResetActivityAllOrganisms();
     std::vector<std::unique_ptr<Organism> > new_babies;
     std::vector<Organism *> losers;
@@ -394,6 +406,8 @@ void WorldManager::Update(const char key) {
     }
 
     Render();
+
+    return true;
 }
 
 bool WorldManager::AddOrganisms(std::vector<std::unique_ptr<Organism> > &new_organisms) {
@@ -455,8 +469,8 @@ void WorldManager::Render() {
 
     printw("\nUse W/A/S/D to move. Press X to exit.\n");
 
-    for (const auto & msg : message_buffer_) {
-        printw("%s",msg.c_str());
+    for (const auto &msg: message_buffer_) {
+        printw("%s", msg.c_str());
     }
     message_buffer_.clear();
     refresh();
@@ -507,4 +521,55 @@ std::unique_ptr<Organism> WorldManager::SpawnAnimals(const OrganismTypes type, c
         }
     }
     return nullptr;
+}
+
+bool WorldManager::LoadGame(const std::string &filename) {
+    std::ifstream file(filename);
+
+    if (!file.is_open()) return false;
+    std::string line;
+
+    // skip the map size line
+    std::getline(file, line);
+
+    while (std::getline(file, line)) {
+        std::istringstream iss(line);
+        int type = -1;
+        int x = -1;
+        int y = -1;
+        int str = -1;
+        int init = -1;
+
+        iss >> type >> y >> x >> str >> init;
+
+        if (type < 0 || y < 0 || x < 0 || init < 0) {
+            return false;
+        }
+
+        // if (loaded_org) {
+        //     loaded_org->SetStr(str);
+        //     loaded_org->SetInit(init);
+        //
+        //     // 3. Put it in the list
+        //     organisms_.push_back(loaded_org);
+        // }
+
+        organisms_.push_back(SpawnAnimals(static_cast<OrganismTypes>(type), {x, y}));
+    }
+    file.close();
+    return true;
+}
+
+bool WorldManager::SaveGame(const std::string &filename) {
+    std::ofstream file(filename);
+
+    if (!file) return false;
+
+    file << static_cast<int>(world_map_.size()) << ' ' << static_cast<int>(organisms_.size()) << '\n';
+
+    for (const auto &org: organisms_) {
+        org->Save(file);
+    }
+    file.close();
+    return true;
 }
