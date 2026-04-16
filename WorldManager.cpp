@@ -1,11 +1,12 @@
 #include "WorldManager.h"
 #include <ctime>
+#include <ncurses.h>
 #include <iostream>
 #include <algorithm>
 #include "./Animals/Wolf.h"
-#include "Animals.h"
 #include "Animals/Antelope.h"
 #include "Animals/Fox.h"
+#include "Animals/Human.h"
 #include "Animals/Sheep.h"
 #include "Animals/Turtle.h"
 #include "Plants/Belladona.h"
@@ -26,7 +27,12 @@ WorldManager::WorldManager(const int map_size, const int organism_count) : world
             continue;
         }
 
-        const int animal_num = rand() % static_cast<int>(OrganismTypes::NONE);
+        int animal_num = 0;
+        if (i == 0) {
+            animal_num = static_cast<int>(OrganismTypes::HUMAN);
+        } else {
+            animal_num = rand() % static_cast<int>(OrganismTypes::NONE);
+        }
 
         organisms_.push_back(SpawnAnimals(static_cast<OrganismTypes>(animal_num), spawn_pos));
     }
@@ -150,13 +156,11 @@ FightResults WorldManager::GetFightLosers(const std::vector<Position> &positions
     }
 
     // check if it's a plant
-    if (attacker->GetType() >= OrganismTypes::GRASS) {
-        std::cout << *attacker << " has killed " << *defender << '\n';
-    }
-    else if (defender->GetType() >= OrganismTypes::GRASS) {
-        std::cout << *attacker << " has eaten " << *defender << '\n';
-    }
-    else {
+    if (defender->GetType() <= OrganismTypes::WOLF) {
+        std::cout << *attacker << " is eating " << *defender << '\n';
+    } else if (attacker->GetType() <= OrganismTypes::WOLF) {
+        std::cout << *attacker << " is attacking " << *defender << '\n';
+    } else {
         std::cout << *attacker << " is attacking " << *defender << '\n';
     }
 
@@ -184,7 +188,7 @@ FightResults WorldManager::GetFightLosers(const std::vector<Position> &positions
 
     lost->SetLife(false);
 
-    return {ReturnCodes::OK, lost};
+    return {ReturnCodes::OKAY, lost};
 }
 
 void WorldManager::Reproduce(std::vector<std::unique_ptr<Organism> > &new_babies, const std::vector<Position> &pos,
@@ -212,7 +216,7 @@ BabyResults WorldManager::MakeLife(const OrganismTypes parent_race, const Positi
 
     child->Render();
 
-    return {ReturnCodes::OK, std::move(child)};
+    return {ReturnCodes::OKAY, std::move(child)};
 }
 
 BabyResults WorldManager::SowPlant(const OrganismTypes parent_race,
@@ -228,7 +232,7 @@ BabyResults WorldManager::SowPlant(const OrganismTypes parent_race,
 
     small_plant->Render();
 
-    return {ReturnCodes::OK, std::move(small_plant)};
+    return {ReturnCodes::OKAY, std::move(small_plant)};
 }
 
 BabyResults WorldManager::CreateBaby(const std::vector<Position> &positions, const OrganismTypes parent_race) {
@@ -317,7 +321,7 @@ void WorldManager::KillArea(std::vector<Organism *> &losers, const std::vector<P
 }
 
 
-void WorldManager::Update() {
+void WorldManager::Update(const char key) {
     ResetActivityAllOrganisms();
     std::vector<std::unique_ptr<Organism> > new_babies;
     std::vector<Organism *> losers;
@@ -328,6 +332,8 @@ void WorldManager::Update() {
 
         if (organism->GetActivity()) continue;
 
+        organism->SetPlayerInput(key);
+
         auto [interaction, pos] = organism->Update();
 
         organism->SetActive(true);
@@ -337,15 +343,21 @@ void WorldManager::Update() {
                 CreateFight(losers, organism, pos);
                 break;
             }
+
             case InteractionTypes::REPRODUCE: {
                 Reproduce(new_babies, pos, organism->GetType());
                 break;
             }
+
             case InteractionTypes::MOVE:
+            case InteractionTypes::NONE:
                 break;
-            case InteractionTypes::AOE_KILL:
+
+            case InteractionTypes::AOE_KILL: {
                 KillArea(losers, pos);
                 break;
+            }
+
             default: {
                 std::cerr << "Error while performing and update on organism\n";
                 break;
@@ -406,20 +418,27 @@ bool WorldManager::DeleteOrganisms(std::vector<Organism *> &dead) {
 
 
 void WorldManager::Render() {
+    clear();
+
     for (const auto &org: organisms_) {
         org->Render();
     }
+
     for (const auto &row: world_map_) {
-        std::cout << " | ";
+        printw(" | ");
         for (const auto tile: row) {
             if (tile) {
-                std::cout << tile->GetSprite() << " | ";
+                printw("%c | ", tile->GetSprite());
             } else {
-                std::cout << MapSprites::EMPTY << " | ";
+                printw("%c | ", MapSprites::EMPTY);
             }
         }
-        std::cout << std::endl;
+        printw("\n");
     }
+
+    printw("\nUse W/A/S/D to move. Press X to exit.\n");
+
+    refresh();
 }
 
 std::unique_ptr<Organism> WorldManager::SpawnAnimals(const OrganismTypes type, const Position &spawn_pos) {
@@ -456,6 +475,9 @@ std::unique_ptr<Organism> WorldManager::SpawnAnimals(const OrganismTypes type, c
         }
         case OrganismTypes::HOGWEED: {
             return std::make_unique<Hogweed>(world_map_, spawn_pos);
+        }
+        case OrganismTypes::HUMAN: {
+            return std::make_unique<Human>(world_map_, spawn_pos);
         }
         default: {
             std::cerr << "Unknown AnimalType" << std::endl;

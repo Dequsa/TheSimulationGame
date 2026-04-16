@@ -7,7 +7,6 @@ Organism::~Organism() {
 }
 
 bool Organism::CheckIfMovingPositionIsCorner(const DIRECTIONS dir) const {
-    // 1. Fixed the swapped X and Y axis bounds
     const int max_x = world_map_[0].size() - 1;
     const int max_y = world_map_.size() - 1;
 
@@ -24,6 +23,7 @@ bool Organism::CheckIfMovingPositionIsCorner(const DIRECTIONS dir) const {
 DIRECTIONS Organism::GetMoveDirection() const {
     DIRECTIONS valid_moves[9];
     int valid_count = 0;
+    // find all valid moves
     for (int i = 0; i < static_cast<int>(DIRECTIONS::DIR_COUNT); i++) {
         auto temp = static_cast<DIRECTIONS>(i);
         if (!CheckIfMovingPositionIsCorner(temp)) {
@@ -34,6 +34,7 @@ DIRECTIONS Organism::GetMoveDirection() const {
 
     if (valid_count == 0) return DIRECTIONS::MID_MID;
 
+    // choose one from valid moves
     return valid_moves[rand() % valid_count];
 }
 
@@ -70,6 +71,10 @@ void Organism::SetPosition(const Position &pos) {
 
 void Organism::AddStr(const int n) {
     str_ += n;
+}
+
+void Organism::SetPlayerInput(const char key) {
+    // base organism doesn't need to do anything with the key
 }
 
 void Organism::AgeUp(const int n) {

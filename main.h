@@ -6,10 +6,10 @@
 #define C__1_MAIN_H
 #pragma once
 #include <iostream>
+#include <ncurses.h>
 #include "Organism.h"
 #include "Animals.h"
 #include "WorldManager.h"
-#include "Animals/Wolf.h"
 
 
 #endif //C__1_MAIN_H

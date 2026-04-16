@@ -54,21 +54,21 @@ enum class DIRECTIONS {
 };
 
 enum class OrganismTypes {
-    WOLF,
-    SHEEP,
-    FOX,
-    TURTLE,
-    ANTELOPE,
-    HUMAN,
-    // below 5 animals
-
-    // above 5 plants
     GRASS,
     SOWTHISTLE,
     GUARANA,
     BELLADONNA,
     HOGWEED,
-    NONE // can be also used as count of types
+    // below 5 plants
+
+    // above and equal 5 animals
+    WOLF, // 5
+    SHEEP,
+    FOX,
+    TURTLE,
+    ANTELOPE,
+    NONE, // can be also used as count of types
+    HUMAN,
 };
 
 std::ostream &operator<<(std::ostream &os, const OrganismTypes type);

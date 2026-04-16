@@ -1,10 +1,7 @@
-//
-// Created by marci on 4/15/2026.
-//
-
 #include "Human.h"
+// #include "../WorldManager.h"
 
-DIRECTIONS Human::ChooseDir(const char key) {
+DIRECTIONS Human::ChooseDirection(const char key) {
     switch (key) {
         case 'w':
             return DIRECTIONS::UP_MID;
@@ -20,8 +17,31 @@ DIRECTIONS Human::ChooseDir(const char key) {
     }
 }
 
-// UpdateData Human::Update(const char key) {
-//     UpdateData data;
-//
-//     ChooseDir(key);
-// }
+void Human::SetPlayerInput(const char key) {
+    current_key_ = key;
+}
+
+UpdateData Human::Update() {
+    const auto dir = ChooseDirection(current_key_);
+    move_ = SetMovementVector(dir);
+
+    if (!CheckIfMovingPositionIsCorner(dir)) {
+        switch (CheckCollision()) {
+            case InteractionTypes::MOVE: {
+                Move();
+                return {InteractionTypes::MOVE, {pos_}};
+            }
+            case InteractionTypes::FIGHT: {
+                const auto enemy_pos = pos_ + move_;
+                UpdateData data = {InteractionTypes::FIGHT, {pos_, enemy_pos}};
+                return data;
+            }
+            default: {
+                UpdateData data = {InteractionTypes::NONE, {pos_}};
+                return data;
+            }
+        }
+    }
+
+    return {InteractionTypes::NONE, {pos_}};
+}

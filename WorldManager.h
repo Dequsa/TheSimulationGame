@@ -13,7 +13,7 @@ class Organism;
 struct AnimalData;
 struct UpdateData;
 namespace ReturnCodes {
-    constexpr int OK = 0;
+    constexpr int OKAY = 0;
     constexpr int ERROR = -1;
     constexpr int SPECIAL_ABILITY = -2;
     constexpr int SPECIAL_DEFENDER = -3;
@@ -72,7 +72,7 @@ public:
 
     ~WorldManager();
 
-    void Update();
+    void Update(const char key);
 
     std::unique_ptr<Organism> SpawnAnimals(const OrganismTypes type, const Position &spawn_pos);
 

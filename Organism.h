@@ -100,6 +100,8 @@ public:
 
     void AddStr(const int n);
 
+    virtual void SetPlayerInput(const char key);
+
     void AgeUp(int n);
 
     // other

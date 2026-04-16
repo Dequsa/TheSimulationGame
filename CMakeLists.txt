@@ -3,6 +3,10 @@ project(C__1)
 
 set(CMAKE_CXX_STANDARD 20)
 
+set(CURSES_NEED_NCURSES TRUE)
+find_package(Curses REQUIRED)
+include_directories(${CURSES_INCLUDE_DIR})
+
 add_executable(C__1 main.cpp
         main.h
         WorldManager.cpp
@@ -39,3 +43,5 @@ add_executable(C__1 main.cpp
         Animals/Human.cpp
         Animals/Human.h
 )
+
+target_link_libraries(C__1 ${CURSES_LIBRARIES})
