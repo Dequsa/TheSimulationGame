@@ -7,7 +7,9 @@
 #pragma once
 #include <iostream>
 
+
 class Organism;
+class Plants;
 
 struct Position {
     Position &operator+=(const Position &that) {
@@ -52,26 +54,36 @@ enum class DIRECTIONS {
 };
 
 enum class OrganismTypes {
-    WOLF, // 0
-    SHEEP, // 1
-    FOX, // 2
-    TURTLE, // 3
-    ANTELOPE, // 4
+    WOLF,
+    SHEEP,
+    FOX,
+    TURTLE,
+    ANTELOPE,
+    HUMAN,
+    // below 5 animals
+
+    // above 5 plants
     GRASS,
     SOWTHISTLE,
     GUARANA,
     BELLADONNA,
+    HOGWEED,
     NONE // can be also used as count of types
 };
 
 std::ostream &operator<<(std::ostream &os, const OrganismTypes type);
+
 std::ostream &operator<<(std::ostream &os, const Position &pos);
+
 std::ostream &operator<<(std::ostream &os, const Organism &org);
+
+std::ostream &operator<<(std::ostream &os, const Plants &org);
 
 enum class InteractionTypes {
     FIGHT,
     REPRODUCE,
     MOVE,
+    AOE_KILL,
     NONE
 };
 

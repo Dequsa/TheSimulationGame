@@ -11,9 +11,8 @@
 #include "Plants/Belladona.h"
 #include "Plants/Grass.h"
 #include "Plants/Guarana.h"
+#include "Plants/Hogweed.h"
 #include "Plants/SowThistle.h"
-
-constexpr int MAX_TRIES = 200;
 
 WorldManager::WorldManager(const int map_size, const int organism_count) : world_map_(
     map_size, std::vector<Organism *>(map_size, nullptr)) {
@@ -45,6 +44,10 @@ WorldManager::~WorldManager() {
 }
 
 void WorldManager::SortOrganisms() {
+    std::erase_if(organisms_, [](const std::unique_ptr<Organism> &org) {
+        return org == nullptr;
+    });
+
     std::sort(organisms_.begin(), organisms_.end(),
               [](const std::unique_ptr<Organism> &a, const std::unique_ptr<Organism> &b) {
                   if (a->GetInit() == b->GetInit()) {
@@ -53,24 +56,6 @@ void WorldManager::SortOrganisms() {
                   return a->GetInit() > b->GetInit();
               });
 }
-
-
-// std::vector<int> WorldManager::GetOrganismIdsAtPositions(const std::vector<Position> &positions) const {
-//     std::vector<int> ids;
-//
-//     for (const auto target_pos: positions) {
-//         for (int i = 0; i < organisms_.size(); i++) {
-//             if (organisms_[i]->GetPosition() == target_pos && organisms_[i]->GetLife()) {
-//                 // check for duplicates
-//                 if (std::find(ids.begin(), ids.end(), i) == ids.end()) {
-//                     ids.push_back(i);
-//                     break;
-//                 }
-//             }
-//         }
-//     }
-//     return ids;
-// }
 
 bool WorldManager::CheckMapContains(const std::vector<Position> &positions) const {
     for (const auto [x, y]: positions) {
@@ -96,6 +81,8 @@ bool WorldManager::CheckMapContains(const std::vector<Position> &positions) cons
 }
 
 Position WorldManager::ChooseAndSetSpawnPoint() const {
+    constexpr int MAX_TRIES = 200;
+
     const int max_x = static_cast<int>(world_map_[0].size());
     const int max_y = static_cast<int>(world_map_.size());
     int max_tries = MAX_TRIES;
@@ -146,8 +133,8 @@ FightResults WorldManager::GetFightLosers(const std::vector<Position> &positions
 
     if (positions.size() < 2) return {ReturnCodes::ERROR, nullptr};
 
-    auto attacker = world_map_[positions[0].y][positions[0].x];
-    auto defender = world_map_[positions[1].y][positions[1].x];
+    const auto attacker = world_map_[positions[0].y][positions[0].x];
+    const auto defender = world_map_[positions[1].y][positions[1].x];
 
     if (attacker == defender) {
         return {ReturnCodes::ERROR, nullptr};
@@ -162,7 +149,17 @@ FightResults WorldManager::GetFightLosers(const std::vector<Position> &positions
         return {ReturnCodes::SPECIAL_DEFENDER, nullptr};
     }
 
-    std::cout << *attacker << " is attacking " << *defender << '\n';
+    // check if it's a plant
+    if (attacker->GetType() >= OrganismTypes::GRASS) {
+        std::cout << *attacker << " has killed " << *defender << '\n';
+    }
+    else if (defender->GetType() >= OrganismTypes::GRASS) {
+        std::cout << *attacker << " has eaten " << *defender << '\n';
+    }
+    else {
+        std::cout << *attacker << " is attacking " << *defender << '\n';
+    }
+
 
     Organism *lost = nullptr;
     Organism *win = nullptr;
@@ -204,7 +201,6 @@ void WorldManager::Reproduce(std::vector<std::unique_ptr<Organism> > &new_babies
 }
 
 BabyResults WorldManager::MakeLife(const OrganismTypes parent_race, const Position c_pos) {
-
     auto child = SpawnAnimals(parent_race, c_pos);
 
     if (!child) {
@@ -298,6 +294,29 @@ void WorldManager::ResetActivityAllOrganisms() {
     }
 }
 
+std::vector<Organism *> WorldManager::FindAffected(const std::vector<Position> &positions) const {
+    std::vector<Organism *> dead;
+    for (const auto &[x, y]: positions) {
+        if (world_map_[y][x] == nullptr) continue;
+        dead.push_back(world_map_[y][x]);
+    }
+
+    return dead;
+}
+
+void WorldManager::KillArea(std::vector<Organism *> &losers, const std::vector<Position> &positions) {
+    const std::vector<Organism *> dead = FindAffected(positions);
+
+    for (const auto &org: dead) {
+        org->SetActive(true);
+        org->SetLife(false);
+
+        std::cout << *org << " got killed by AOE attack.\n";
+        losers.push_back(org);
+    }
+}
+
+
 void WorldManager::Update() {
     ResetActivityAllOrganisms();
     std::vector<std::unique_ptr<Organism> > new_babies;
@@ -323,6 +342,9 @@ void WorldManager::Update() {
                 break;
             }
             case InteractionTypes::MOVE:
+                break;
+            case InteractionTypes::AOE_KILL:
+                KillArea(losers, pos);
                 break;
             default: {
                 std::cerr << "Error while performing and update on organism\n";
@@ -431,6 +453,9 @@ std::unique_ptr<Organism> WorldManager::SpawnAnimals(const OrganismTypes type, c
         }
         case OrganismTypes::BELLADONNA: {
             return std::make_unique<Belladonna>(world_map_, spawn_pos);
+        }
+        case OrganismTypes::HOGWEED: {
+            return std::make_unique<Hogweed>(world_map_, spawn_pos);
         }
         default: {
             std::cerr << "Unknown AnimalType" << std::endl;

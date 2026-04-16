@@ -34,4 +34,8 @@ add_executable(C__1 main.cpp
         Plants/Guarana.h
         Plants/Belladona.cpp
         Plants/Belladona.h
+        Plants/Hogweed.cpp
+        Plants/Hogweed.h
+        Animals/Human.cpp
+        Animals/Human.h
 )

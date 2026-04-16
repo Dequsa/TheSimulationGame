@@ -61,7 +61,11 @@ class WorldManager {
 
     void ResetActivityAllOrganisms();
 
+    std::vector<Organism *> FindAffected(const std::vector<Position> &positions) const;
+
     void SortOrganisms();
+
+    void KillArea(std::vector<Organism*> &losers, const std::vector<Position> &positions);
 
 public:
     WorldManager(const int map_size, const int organism_count);
