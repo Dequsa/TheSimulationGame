@@ -35,13 +35,13 @@ std::vector<Position> Hogweed::LookAround() {
     return result;
 }
 
-UpdateData Hogweed::Update() {
+UpdateData Hogweed::Update(std::vector<std::string> &message_buffer) {
     // auto data = Plants::Update();
 
     const std::vector<Position> dead = LookAround();
 
     if (dead.empty()) {
-        return Plants::Update();
+        return Plants::Update(message_buffer);
     }
 
     UpdateData data = {InteractionTypes::AOE_KILL, dead};

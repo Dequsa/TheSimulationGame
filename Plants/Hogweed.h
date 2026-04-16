@@ -1,7 +1,3 @@
-//
-// Created by marci on 4/15/2026.
-//
-
 #ifndef C__1_HOGWEED_H
 #define C__1_HOGWEED_H
 #include "../Plants.h"
@@ -28,7 +24,7 @@ class Hogweed final: public Plants  {
 public:
     Hogweed(std::vector<std::vector<Organism*> > &world_map,  const Position &spawn_pos) : Plants(world_map, data_, spawn_pos) {}
 
-    UpdateData Update() override;
+    UpdateData Update(std::vector<std::string> &message_buffer) override;
 
     ~Hogweed() override = default;
 };

@@ -50,7 +50,9 @@ enum class DIRECTIONS {
     BOT_MID,
     BOT_RIGHT,
 
-    DIR_COUNT
+    DIR_COUNT,
+
+    HUMAN_SPECIAL
 };
 
 enum class OrganismTypes {

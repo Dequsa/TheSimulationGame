@@ -36,11 +36,11 @@ public:;
 
     ~Animal() override = default;
 
-    UpdateData Update() override;
+    UpdateData Update(std::vector<std::string> &message_buffer) override;
 
     virtual bool SpecialCheck(const Organism &other) const override {return false;}
 
-    virtual void SpecialAbility() override {}
+    virtual void SpecialAbility(std::vector<std::string> &message_buffer) override {}
 
     virtual Position SetMovementVector(const DIRECTIONS dir) {return Organism::SetMovementVector(dir);}
 

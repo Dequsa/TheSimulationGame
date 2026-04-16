@@ -57,12 +57,12 @@ public:
 
     virtual ~Organism();
 
-    virtual UpdateData Update() = 0;
+    virtual UpdateData Update(std::vector<std::string> &message_buffer) = 0;
 
     virtual bool SpecialCheck(const Organism &other) const{return false;}
     virtual bool SpecialCheck(Organism &other) {return false;}
 
-    virtual void SpecialAbility() {}
+    virtual void SpecialAbility(std::vector<std::string> &message_buffer) {}
 
     bool CheckIfMovingPositionIsCorner(const DIRECTIONS dir) const;
 
@@ -70,7 +70,11 @@ public:
 
     Position SetMovementVector(const DIRECTIONS dir) const;
 
+    virtual void SetPlayerInput(const char key);
+
     void FreeSpace();
+
+    virtual void Print(std::ostream &os) const;
 
     // organism getters
     Position GetPosition() const;
@@ -99,8 +103,6 @@ public:
     void SetPosition(const Position &pos);
 
     void AddStr(const int n);
-
-    virtual void SetPlayerInput(const char key);
 
     void AgeUp(int n);
 

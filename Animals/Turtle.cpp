@@ -3,6 +3,8 @@
 //
 
 #include "./Turtle.h"
+#include <ncurses.h>
+#include <sstream>
 
 Position Turtle::SetMovementVector(const DIRECTIONS dir) {
     auto direction = dir;
@@ -26,7 +28,9 @@ bool Turtle::SpecialCheck(const Organism &other) const {
     return false;
 }
 
-void Turtle::SpecialAbility() {
-    std::cout<< *this << " is deflecting enemy" << '\n';
+void Turtle::SpecialAbility( std::vector<std::string> &message_buffer) {
+    std::ostringstream oss;
+    oss << *this << " is deflecting enemy" << '\n';
+    printw("%s", oss.str().c_str());
     // he does nothing just stands there
 }

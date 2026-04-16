@@ -150,3 +150,7 @@ Position Organism::SetMovementVector(const DIRECTIONS dir) const {
 void Organism::FreeSpace() {
     world_map_[pos_.y][pos_.x] = nullptr;
 }
+
+void Organism::Print(std::ostream &os) const {
+        os << GetType() << " at position: " << GetPosition() << " age: " << GetAge() << " str: " << GetStr() << " init: " << GetInit();
+}

@@ -11,7 +11,7 @@ bool Fox::SpecialCheck(const Organism &other) const {
     return str_ < other.GetStr();
 }
 
-void Fox::SpecialAbility() {
+void Fox::SpecialAbility( std::vector<std::string> &message_buffer) {
     MoveToPosition(last_pos_);
 }
 

@@ -5,7 +5,7 @@
 #include "Animals.h"
 #include <iostream>
 
-UpdateData Animal::Update() {
+UpdateData Animal::Update(std::vector<std::string> &message_buffer) {
     UpdateData data{InteractionTypes::MOVE, {{-1, -1}, {-1, -1}}};
     const auto dir = GetMoveDirection();
     move_ = SetMovementVector(dir);

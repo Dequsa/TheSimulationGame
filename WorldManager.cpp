@@ -1,8 +1,9 @@
 #include "WorldManager.h"
 #include <ctime>
 #include <ncurses.h>
-#include <iostream>
+// #include <iostream>
 #include <algorithm>
+#include <sstream>
 #include "./Animals/Wolf.h"
 #include "Animals/Antelope.h"
 #include "Animals/Fox.h"
@@ -63,10 +64,12 @@ void WorldManager::SortOrganisms() {
               });
 }
 
-bool WorldManager::CheckMapContains(const std::vector<Position> &positions) const {
+bool WorldManager::CheckMapContains(const std::vector<Position> &positions) {
     for (const auto [x, y]: positions) {
         if (x == -1 || y == -1) {
-            std::cerr << "Error while creating a baby or a fight at pos: " << x << ' ' << y << '\n';
+            std::ostringstream oss;
+            oss << "Error while creating a baby or a fight at pos: " << x << ' ' << y << '\n';
+            message_buffer_.push_back(oss.str());
             return false;
         }
     }
@@ -147,21 +150,23 @@ FightResults WorldManager::GetFightLosers(const std::vector<Position> &positions
     }
 
     if (attacker->SpecialCheck(*defender)) {
+        attacker->SpecialAbility(message_buffer_);
         return {ReturnCodes::SPECIAL_ABILITY, nullptr};
     }
 
     if (defender->SpecialCheck(*attacker)) {
-        defender->SpecialAbility();
+        defender->SpecialAbility(message_buffer_);
         return {ReturnCodes::SPECIAL_DEFENDER, nullptr};
     }
 
     // check if it's a plant
+    std::ostringstream oss;
     if (defender->GetType() <= OrganismTypes::WOLF) {
-        std::cout << *attacker << " is eating " << *defender << '\n';
+        oss << *attacker << " is eating " << *defender << '\n';
     } else if (attacker->GetType() <= OrganismTypes::WOLF) {
-        std::cout << *attacker << " is attacking " << *defender << '\n';
+        oss << *attacker << " is attacking " << *defender << '\n';
     } else {
-        std::cout << *attacker << " is attacking " << *defender << '\n';
+        oss << *attacker << " is attacking " << *defender << '\n';
     }
 
 
@@ -176,7 +181,7 @@ FightResults WorldManager::GetFightLosers(const std::vector<Position> &positions
         lost = attacker;
     }
 
-    std::cout << lost->GetType() << " died :(\n";
+    oss << lost->GetType() << " died :(\n";
 
     lost->FreeSpace();
 
@@ -188,6 +193,7 @@ FightResults WorldManager::GetFightLosers(const std::vector<Position> &positions
 
     lost->SetLife(false);
 
+    message_buffer_.push_back(oss.str());
     return {ReturnCodes::OKAY, lost};
 }
 
@@ -207,31 +213,37 @@ void WorldManager::Reproduce(std::vector<std::unique_ptr<Organism> > &new_babies
 BabyResults WorldManager::MakeLife(const OrganismTypes parent_race, const Position c_pos) {
     auto child = SpawnAnimals(parent_race, c_pos);
 
+    std::ostringstream oss;
     if (!child) {
-        std::cerr << "Error while spawning child\n";
+        oss << "Error while spawning child\n";
+        message_buffer_.push_back(oss.str());
         return {ReturnCodes::ERROR, nullptr};
     }
 
-    std::cout << "New child: " << *child << '\n';
+    oss << "New child: " << *child << '\n';
 
     child->Render();
 
+    message_buffer_.push_back(oss.str());
     return {ReturnCodes::OKAY, std::move(child)};
 }
 
 BabyResults WorldManager::SowPlant(const OrganismTypes parent_race,
                                    const Position c_pos) {
     auto small_plant = SpawnAnimals(parent_race, c_pos);
+    std::ostringstream oss;
 
     if (!small_plant) {
-        std::cerr << "Error while sowing plants\n";
+        oss << "Error while sowing plants\n";
+        message_buffer_.push_back(oss.str());
         return {ReturnCodes::ERROR, nullptr};
     }
 
-    std::cout << "New plant: " << *small_plant << '\n';
+    oss << "New plant: " << *small_plant << '\n';
 
     small_plant->Render();
 
+    message_buffer_.push_back(oss.str());
     return {ReturnCodes::OKAY, std::move(small_plant)};
 }
 
@@ -250,11 +262,12 @@ BabyResults WorldManager::CreateBaby(const std::vector<Position> &positions, con
         }
     }
 
+    std::ostringstream oss;
     for (const auto parent: parents) {
         if (parents.size() == 1) {
-            std::cout << "Seed flew from: " << *parent << '\n';
+            oss << "Seed flew from: " << *parent << '\n';
         } else {
-            std::cout << "Parent: " << *parent << '\n';
+            oss << "Parent: " << *parent << '\n';
         }
 
         parent->SetActive(true);
@@ -268,6 +281,7 @@ BabyResults WorldManager::CreateBaby(const std::vector<Position> &positions, con
         return SowPlant(parent_race, c_pos);
     }
 
+    message_buffer_.push_back(oss.str());
     return {ReturnCodes::ERROR, nullptr};
 }
 
@@ -280,7 +294,6 @@ void WorldManager::CreateFight(std::vector<Organism *> &losers, const std::uniqu
     }
 
     if (code == ReturnCodes::SPECIAL_ABILITY) {
-        organism->SpecialAbility();
         return;
     }
 
@@ -315,7 +328,9 @@ void WorldManager::KillArea(std::vector<Organism *> &losers, const std::vector<P
         org->SetActive(true);
         org->SetLife(false);
 
-        std::cout << *org << " got killed by AOE attack.\n";
+        std::ostringstream oss;
+        oss << *org << " got killed by AOE attack.\n";
+        message_buffer_.push_back(oss.str());
         losers.push_back(org);
     }
 }
@@ -334,7 +349,7 @@ void WorldManager::Update(const char key) {
 
         organism->SetPlayerInput(key);
 
-        auto [interaction, pos] = organism->Update();
+        auto [interaction, pos] = organism->Update(message_buffer_);
 
         organism->SetActive(true);
 
@@ -359,7 +374,9 @@ void WorldManager::Update(const char key) {
             }
 
             default: {
-                std::cerr << "Error while performing and update on organism\n";
+                std::ostringstream oss;
+                oss << "Error while performing and update on organism\n";
+                message_buffer_.push_back(oss.str());
                 break;
             }
         }
@@ -438,6 +455,10 @@ void WorldManager::Render() {
 
     printw("\nUse W/A/S/D to move. Press X to exit.\n");
 
+    for (const auto & msg : message_buffer_) {
+        printw("%s",msg.c_str());
+    }
+    message_buffer_.clear();
     refresh();
 }
 
@@ -480,7 +501,9 @@ std::unique_ptr<Organism> WorldManager::SpawnAnimals(const OrganismTypes type, c
             return std::make_unique<Human>(world_map_, spawn_pos);
         }
         default: {
-            std::cerr << "Unknown AnimalType" << std::endl;
+            std::ostringstream oss;
+            oss << "Unknown AnimalType" << std::endl;
+            message_buffer_.push_back(oss.str());
         }
     }
     return nullptr;

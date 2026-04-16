@@ -46,11 +46,13 @@ std::ostream &operator<<(std::ostream &os, const Position &pos) {
 
 
 std::ostream &operator<<(std::ostream &os, const Organism &org) {
-    os << org.GetType() << " at position: " << org.GetPosition() << " age: " << org.GetAge() << " str: " << org.GetStr() << " init: " << org.GetInit();
+    // os << org.GetType() << " at position: " << org.GetPosition() << " age: " << org.GetAge() << " str: " << org.GetStr() << " init: " << org.GetInit();
+    org.Print(os);
     return os;
 }
 
 std::ostream & operator<<(std::ostream &os, const Plants &org) {
-    os << org.GetType() << " at position: " << org.GetPosition() << " age: " << org.GetAge();
+    // os << org.GetType() << " at position: " << org.GetPosition() << " age: " << org.GetAge();
+    org.Print(os);
     return os;
 }

@@ -1,5 +1,8 @@
 #include "./Antelope.h"
 
+#include <ncurses.h>
+#include <sstream>
+
 Position Antelope::SetMovementVector(const DIRECTIONS dir) {
     auto jump_move = Animal::SetMovementVector(dir);
 
@@ -13,6 +16,8 @@ bool Antelope::SpecialCheck(const Organism &other) const {
     return rand() & 1;
 }
 
-void Antelope::SpecialAbility() {
-    std::cout << *this << " has avoided the fight :)\n";
+void Antelope::SpecialAbility( std::vector<std::string> &message_buffer) {
+    std::ostringstream oss;
+    oss << *this << " has avoided the fight :)\n";
+    message_buffer.push_back(oss.str());
 }

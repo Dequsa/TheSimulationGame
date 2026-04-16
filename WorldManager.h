@@ -32,11 +32,12 @@ struct BabyResults {
 class WorldManager {
     std::vector<std::unique_ptr<Organism> > organisms_;
     std::vector<std::vector<Organism*> > world_map_;
+    std::vector<std::string> message_buffer_;
 
     // special abilities
     bool CheckIfAttackerIsFox(const Organism &org1, const Organism &org2);
 
-    bool CheckMapContains(const std::vector<Position> &positions) const;
+    bool CheckMapContains(const std::vector<Position> &positions);
 
     Position ChooseAndSetSpawnPoint() const;
 
