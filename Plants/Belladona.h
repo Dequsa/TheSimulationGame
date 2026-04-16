@@ -8,7 +8,7 @@
 
 namespace BELLADONNA {
     constexpr int STR = 99;
-    constexpr char SPRITE = 'B';
+    constexpr char SPRITE = '\\';
     constexpr auto TYPE =  OrganismTypes::BELLADONNA;
     constexpr int STR_INCREASE = 1;
 }
