@@ -1,50 +1,67 @@
 #include "WorldManager.h"
 #include <ctime>
-#include <iostream>
+#include <ncurses.h>
+// #include <iostream>
 #include <algorithm>
+#include <sstream>
+#include <fstream>
 #include "./Animals/Wolf.h"
-#include "Animals.h"
 #include "Animals/Antelope.h"
 #include "Animals/Fox.h"
+#include "Animals/Human.h"
 #include "Animals/Sheep.h"
 #include "Animals/Turtle.h"
 #include "Plants/Belladona.h"
 #include "Plants/Grass.h"
 #include "Plants/Guarana.h"
+#include "Plants/Hogweed.h"
 #include "Plants/SowThistle.h"
 
-constexpr int MAX_TRIES = 200;
-
-WorldManager::WorldManager(const int map_size, const int organism_count) : world_map_(
+WorldManager::WorldManager(const int map_size, const int organism_count, const bool load) : world_map_(
     map_size, std::vector<Organism *>(map_size, nullptr)) {
     std::srand(time(NULL));
-    // add organisms to the world_map
-    for (int i = 0; i < organism_count; i++) {
-        Position spawn_pos = ChooseAndSetSpawnPoint();
 
-        if (spawn_pos.x == -1 || spawn_pos.y == -1) {
-            i--;
-            continue;
+    if (load) {
+        if (!LoadGame("../Saves/SaveData.txt")) return;
+        SortOrganisms();
+        Render();
+    } else {
+        for (int i = 0; i < organism_count; i++) {
+            Position spawn_pos = ChooseAndSetSpawnPoint();
+
+            if (spawn_pos.x == -1 || spawn_pos.y == -1) {
+                i--;
+                continue;
+            }
+
+            int animal_num = 0;
+            if (i == 0) {
+                animal_num = static_cast<int>(OrganismTypes::HUMAN);
+            } else {
+                animal_num = rand() % static_cast<int>(OrganismTypes::NONE);
+            }
+
+            organisms_.push_back(SpawnAnimals(static_cast<OrganismTypes>(animal_num), spawn_pos));
         }
+        SortOrganisms();
 
-        const int animal_num = rand() % static_cast<int>(OrganismTypes::NONE);
-
-        organisms_.push_back(SpawnAnimals(static_cast<OrganismTypes>(animal_num), spawn_pos));
+        Render();
     }
-    SortOrganisms();
-
-    Render();
 }
 
 WorldManager::~WorldManager() {
-    world_map_.clear();
-    world_map_.shrink_to_fit();
-
     organisms_.clear();
     organisms_.shrink_to_fit();
+
+    world_map_.clear();
+    world_map_.shrink_to_fit();
 }
 
 void WorldManager::SortOrganisms() {
+    std::erase_if(organisms_, [](const std::unique_ptr<Organism> &org) {
+        return org == nullptr;
+    });
+
     std::sort(organisms_.begin(), organisms_.end(),
               [](const std::unique_ptr<Organism> &a, const std::unique_ptr<Organism> &b) {
                   if (a->GetInit() == b->GetInit()) {
@@ -54,28 +71,12 @@ void WorldManager::SortOrganisms() {
               });
 }
 
-
-// std::vector<int> WorldManager::GetOrganismIdsAtPositions(const std::vector<Position> &positions) const {
-//     std::vector<int> ids;
-//
-//     for (const auto target_pos: positions) {
-//         for (int i = 0; i < organisms_.size(); i++) {
-//             if (organisms_[i]->GetPosition() == target_pos && organisms_[i]->GetLife()) {
-//                 // check for duplicates
-//                 if (std::find(ids.begin(), ids.end(), i) == ids.end()) {
-//                     ids.push_back(i);
-//                     break;
-//                 }
-//             }
-//         }
-//     }
-//     return ids;
-// }
-
-bool WorldManager::CheckMapContains(const std::vector<Position> &positions) const {
+bool WorldManager::CheckMapContains(const std::vector<Position> &positions) {
     for (const auto [x, y]: positions) {
         if (x == -1 || y == -1) {
-            std::cerr << "Error while creating a baby or a fight at pos: " << x << ' ' << y << '\n';
+            std::ostringstream oss;
+            oss << "Error while creating a baby or a fight at pos: " << x << ' ' << y << '\n';
+            message_buffer_.push_back(oss.str());
             return false;
         }
     }
@@ -96,6 +97,8 @@ bool WorldManager::CheckMapContains(const std::vector<Position> &positions) cons
 }
 
 Position WorldManager::ChooseAndSetSpawnPoint() const {
+    constexpr int MAX_TRIES = 200;
+
     const int max_x = static_cast<int>(world_map_[0].size());
     const int max_y = static_cast<int>(world_map_.size());
     int max_tries = MAX_TRIES;
@@ -146,23 +149,33 @@ FightResults WorldManager::GetFightLosers(const std::vector<Position> &positions
 
     if (positions.size() < 2) return {ReturnCodes::ERROR, nullptr};
 
-    auto attacker = world_map_[positions[0].y][positions[0].x];
-    auto defender = world_map_[positions[1].y][positions[1].x];
+    const auto attacker = world_map_[positions[0].y][positions[0].x];
+    const auto defender = world_map_[positions[1].y][positions[1].x];
 
     if (attacker == defender) {
         return {ReturnCodes::ERROR, nullptr};
     }
 
     if (attacker->SpecialCheck(*defender)) {
+        attacker->SpecialAbility(message_buffer_);
         return {ReturnCodes::SPECIAL_ABILITY, nullptr};
     }
 
     if (defender->SpecialCheck(*attacker)) {
-        defender->SpecialAbility();
+        defender->SpecialAbility(message_buffer_);
         return {ReturnCodes::SPECIAL_DEFENDER, nullptr};
     }
 
-    std::cout << *attacker << " is attacking " << *defender << '\n';
+    // check if it's a plant
+    std::ostringstream oss;
+    if (defender->GetType() <= OrganismTypes::WOLF) {
+        oss << *attacker << " is eating " << *defender << '\n';
+    } else if (attacker->GetType() <= OrganismTypes::WOLF) {
+        oss << *attacker << " is attacking " << *defender << '\n';
+    } else {
+        oss << *attacker << " is attacking " << *defender << '\n';
+    }
+
 
     Organism *lost = nullptr;
     Organism *win = nullptr;
@@ -175,7 +188,7 @@ FightResults WorldManager::GetFightLosers(const std::vector<Position> &positions
         lost = attacker;
     }
 
-    std::cout << lost->GetType() << " died :(\n";
+    oss << lost->GetType() << " died :(\n";
 
     lost->FreeSpace();
 
@@ -187,7 +200,8 @@ FightResults WorldManager::GetFightLosers(const std::vector<Position> &positions
 
     lost->SetLife(false);
 
-    return {ReturnCodes::OK, lost};
+    message_buffer_.push_back(oss.str());
+    return {ReturnCodes::OKAY, lost};
 }
 
 void WorldManager::Reproduce(std::vector<std::unique_ptr<Organism> > &new_babies, const std::vector<Position> &pos,
@@ -204,35 +218,40 @@ void WorldManager::Reproduce(std::vector<std::unique_ptr<Organism> > &new_babies
 }
 
 BabyResults WorldManager::MakeLife(const OrganismTypes parent_race, const Position c_pos) {
-
     auto child = SpawnAnimals(parent_race, c_pos);
 
+    std::ostringstream oss;
     if (!child) {
-        std::cerr << "Error while spawning child\n";
+        oss << "Error while spawning child\n";
+        message_buffer_.push_back(oss.str());
         return {ReturnCodes::ERROR, nullptr};
     }
 
-    std::cout << "New child: " << *child << '\n';
+    oss << "New child: " << *child << '\n';
 
     child->Render();
 
-    return {ReturnCodes::OK, std::move(child)};
+    message_buffer_.push_back(oss.str());
+    return {ReturnCodes::OKAY, std::move(child)};
 }
 
 BabyResults WorldManager::SowPlant(const OrganismTypes parent_race,
                                    const Position c_pos) {
     auto small_plant = SpawnAnimals(parent_race, c_pos);
+    std::ostringstream oss;
 
     if (!small_plant) {
-        std::cerr << "Error while sowing plants\n";
+        oss << "Error while sowing plants\n";
+        message_buffer_.push_back(oss.str());
         return {ReturnCodes::ERROR, nullptr};
     }
 
-    std::cout << "New plant: " << *small_plant << '\n';
+    oss << "New plant: " << *small_plant << '\n';
 
     small_plant->Render();
 
-    return {ReturnCodes::OK, std::move(small_plant)};
+    message_buffer_.push_back(oss.str());
+    return {ReturnCodes::OKAY, std::move(small_plant)};
 }
 
 BabyResults WorldManager::CreateBaby(const std::vector<Position> &positions, const OrganismTypes parent_race) {
@@ -250,11 +269,12 @@ BabyResults WorldManager::CreateBaby(const std::vector<Position> &positions, con
         }
     }
 
+    std::ostringstream oss;
     for (const auto parent: parents) {
         if (parents.size() == 1) {
-            std::cout << "Seed flew from: " << *parent << '\n';
+            oss << "Seed flew from: " << *parent << '\n';
         } else {
-            std::cout << "Parent: " << *parent << '\n';
+            oss << "Parent: " << *parent << '\n';
         }
 
         parent->SetActive(true);
@@ -268,6 +288,7 @@ BabyResults WorldManager::CreateBaby(const std::vector<Position> &positions, con
         return SowPlant(parent_race, c_pos);
     }
 
+    message_buffer_.push_back(oss.str());
     return {ReturnCodes::ERROR, nullptr};
 }
 
@@ -280,7 +301,6 @@ void WorldManager::CreateFight(std::vector<Organism *> &losers, const std::uniqu
     }
 
     if (code == ReturnCodes::SPECIAL_ABILITY) {
-        organism->SpecialAbility();
         return;
     }
 
@@ -298,7 +318,37 @@ void WorldManager::ResetActivityAllOrganisms() {
     }
 }
 
-void WorldManager::Update() {
+std::vector<Organism *> WorldManager::FindAffected(const std::vector<Position> &positions) const {
+    std::vector<Organism *> dead;
+    for (const auto &[x, y]: positions) {
+        if (world_map_[y][x] == nullptr) continue;
+        dead.push_back(world_map_[y][x]);
+    }
+
+    return dead;
+}
+
+void WorldManager::KillArea(std::vector<Organism *> &losers, const std::vector<Position> &positions) {
+    const std::vector<Organism *> dead = FindAffected(positions);
+
+    for (const auto &org: dead) {
+        org->SetActive(true);
+        org->SetLife(false);
+
+        std::ostringstream oss;
+        oss << *org << " got killed by AOE attack.\n";
+        message_buffer_.push_back(oss.str());
+        losers.push_back(org);
+    }
+}
+
+
+bool WorldManager::Update(const char key) {
+    if (key == KEYS::SAVE) {
+        SaveGame("../Saves/SaveData.txt");
+        return false;
+    }
+
     ResetActivityAllOrganisms();
     std::vector<std::unique_ptr<Organism> > new_babies;
     std::vector<Organism *> losers;
@@ -309,7 +359,9 @@ void WorldManager::Update() {
 
         if (organism->GetActivity()) continue;
 
-        auto [interaction, pos] = organism->Update();
+        organism->SetPlayerInput(key);
+
+        auto [interaction, pos] = organism->Update(message_buffer_);
 
         organism->SetActive(true);
 
@@ -318,14 +370,25 @@ void WorldManager::Update() {
                 CreateFight(losers, organism, pos);
                 break;
             }
+
             case InteractionTypes::REPRODUCE: {
                 Reproduce(new_babies, pos, organism->GetType());
                 break;
             }
+
             case InteractionTypes::MOVE:
+            case InteractionTypes::NONE:
                 break;
+
+            case InteractionTypes::AOE_KILL: {
+                KillArea(losers, pos);
+                break;
+            }
+
             default: {
-                std::cerr << "Error while performing and update on organism\n";
+                std::ostringstream oss;
+                oss << "Error while performing and update on organism\n";
+                message_buffer_.push_back(oss.str());
                 break;
             }
         }
@@ -343,6 +406,8 @@ void WorldManager::Update() {
     }
 
     Render();
+
+    return true;
 }
 
 bool WorldManager::AddOrganisms(std::vector<std::unique_ptr<Organism> > &new_organisms) {
@@ -384,20 +449,31 @@ bool WorldManager::DeleteOrganisms(std::vector<Organism *> &dead) {
 
 
 void WorldManager::Render() {
+    clear();
+
     for (const auto &org: organisms_) {
         org->Render();
     }
+
     for (const auto &row: world_map_) {
-        std::cout << " | ";
+        printw(" | ");
         for (const auto tile: row) {
             if (tile) {
-                std::cout << tile->GetSprite() << " | ";
+                printw("%c | ", tile->GetSprite());
             } else {
-                std::cout << MapSprites::EMPTY << " | ";
+                printw("%c | ", MapSprites::EMPTY);
             }
         }
-        std::cout << std::endl;
+        printw("\n");
     }
+
+    printw("\nUse W/A/S/D to move. Press X to exit.\n");
+
+    for (const auto &msg: message_buffer_) {
+        printw("%s", msg.c_str());
+    }
+    message_buffer_.clear();
+    refresh();
 }
 
 std::unique_ptr<Organism> WorldManager::SpawnAnimals(const OrganismTypes type, const Position &spawn_pos) {
@@ -432,9 +508,69 @@ std::unique_ptr<Organism> WorldManager::SpawnAnimals(const OrganismTypes type, c
         case OrganismTypes::BELLADONNA: {
             return std::make_unique<Belladonna>(world_map_, spawn_pos);
         }
+        case OrganismTypes::HOGWEED: {
+            return std::make_unique<Hogweed>(world_map_, spawn_pos);
+        }
+        case OrganismTypes::HUMAN: {
+            return std::make_unique<Human>(world_map_, spawn_pos);
+        }
         default: {
-            std::cerr << "Unknown AnimalType" << std::endl;
+            std::ostringstream oss;
+            oss << "Unknown AnimalType" << std::endl;
+            message_buffer_.push_back(oss.str());
         }
     }
     return nullptr;
+}
+
+bool WorldManager::LoadGame(const std::string &filename) {
+    std::ifstream file(filename);
+
+    if (!file.is_open()) return false;
+    std::string line;
+
+    // skip the map size line
+    std::getline(file, line);
+
+    while (std::getline(file, line)) {
+        std::istringstream iss(line);
+        int type = -1;
+        int x = -1;
+        int y = -1;
+        int str = -1;
+        int init = -1;
+
+        iss >> type >> y >> x >> str >> init;
+
+        if (type < 0 || y < 0 || x < 0 || init < 0) {
+            return false;
+        }
+
+        auto org = SpawnAnimals(static_cast<OrganismTypes>(type), {x, y});
+
+        if (org) {
+            org->SetStr(str);
+            org->SetInit(init);
+            organisms_.push_back(std::move(org));
+        } else {
+            file.close();
+            return false;
+        }
+    }
+    file.close();
+    return true;
+}
+
+bool WorldManager::SaveGame(const std::string &filename) {
+    std::ofstream file(filename);
+
+    if (!file) return false;
+
+    file << static_cast<int>(world_map_.size()) << ' ' << static_cast<int>(organisms_.size()) << '\n';
+
+    for (const auto &org: organisms_) {
+        org->Save(file);
+    }
+    file.close();
+    return true;
 }

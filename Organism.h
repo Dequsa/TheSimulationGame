@@ -18,8 +18,8 @@ protected:
     std::vector<std::vector<Organism*> > &world_map_;
     Position pos_{};
     uint32_t id_{};
-    uint8_t str_{};
-    uint8_t init_{};
+    int str_{};
+    int init_{};
     int age_{};
     char sprite_{};
     bool has_acted_{};
@@ -57,12 +57,12 @@ public:
 
     virtual ~Organism();
 
-    virtual UpdateData Update() = 0;
+    virtual UpdateData Update(std::vector<std::string> &message_buffer) = 0;
 
     virtual bool SpecialCheck(const Organism &other) const{return false;}
     virtual bool SpecialCheck(Organism &other) {return false;}
 
-    virtual void SpecialAbility() {}
+    virtual void SpecialAbility(std::vector<std::string> &message_buffer) {}
 
     bool CheckIfMovingPositionIsCorner(const DIRECTIONS dir) const;
 
@@ -70,7 +70,13 @@ public:
 
     Position SetMovementVector(const DIRECTIONS dir) const;
 
+    virtual void SetPlayerInput(const char key);
+
     void FreeSpace();
+
+    virtual void Print(std::ostream &os) const;
+
+    virtual std::ostream &Save(std::ostream &os) const;
 
     // organism getters
     Position GetPosition() const;
@@ -101,6 +107,10 @@ public:
     void AddStr(const int n);
 
     void AgeUp(int n);
+
+    // used in loading
+    void SetStr(const int n);
+    void SetInit(const int n);
 
     // other
     virtual void Render() = 0;

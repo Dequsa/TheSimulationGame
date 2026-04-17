@@ -8,7 +8,7 @@
 #include "../Plants.h"
 namespace GRASS {
     constexpr int STR = 0;
-    constexpr char SPRITE = 'G';
+    constexpr char SPRITE = '_';
     constexpr auto TYPE =  OrganismTypes::GRASS;
 }
 

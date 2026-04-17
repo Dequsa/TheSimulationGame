@@ -8,7 +8,7 @@ Plants::Plants(std::vector<std::vector<Organism*> > &world_map, const PlantData 
     world_map, data, pos) {
 }
 
-UpdateData Plants::Update() {
+UpdateData Plants::Update(std::vector<std::string> &message_buffer) {
     UpdateData data{InteractionTypes::MOVE, {{-1, -1}, {-1, -1}}};
     const auto dir = GetMoveDirection();
     move_ = SetMovementVector(dir);
@@ -38,6 +38,10 @@ UpdateData Plants::Update() {
 
 void Plants::Render() {
     world_map_[pos_.y][pos_.x] = this;
+}
+
+void Plants::Print(std::ostream &os) const {
+        os << GetType() << " at position: " << GetPosition() << " age: " << GetAge();
 }
 
 InteractionTypes Plants::CheckCollision() {

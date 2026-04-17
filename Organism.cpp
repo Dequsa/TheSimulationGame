@@ -7,7 +7,6 @@ Organism::~Organism() {
 }
 
 bool Organism::CheckIfMovingPositionIsCorner(const DIRECTIONS dir) const {
-    // 1. Fixed the swapped X and Y axis bounds
     const int max_x = world_map_[0].size() - 1;
     const int max_y = world_map_.size() - 1;
 
@@ -24,6 +23,7 @@ bool Organism::CheckIfMovingPositionIsCorner(const DIRECTIONS dir) const {
 DIRECTIONS Organism::GetMoveDirection() const {
     DIRECTIONS valid_moves[9];
     int valid_count = 0;
+    // find all valid moves
     for (int i = 0; i < static_cast<int>(DIRECTIONS::DIR_COUNT); i++) {
         auto temp = static_cast<DIRECTIONS>(i);
         if (!CheckIfMovingPositionIsCorner(temp)) {
@@ -34,6 +34,7 @@ DIRECTIONS Organism::GetMoveDirection() const {
 
     if (valid_count == 0) return DIRECTIONS::MID_MID;
 
+    // choose one from valid moves
     return valid_moves[rand() % valid_count];
 }
 
@@ -72,8 +73,20 @@ void Organism::AddStr(const int n) {
     str_ += n;
 }
 
+void Organism::SetPlayerInput(const char key) {
+    // base organism doesn't need to do anything with the key
+}
+
 void Organism::AgeUp(const int n) {
     age_ += n;
+}
+
+void Organism::SetStr(const int n) {
+    str_ = n;
+}
+
+void Organism::SetInit(const int n) {
+    init_ = n;
 }
 
 bool Organism::GetActivity() const {
@@ -144,4 +157,13 @@ Position Organism::SetMovementVector(const DIRECTIONS dir) const {
 
 void Organism::FreeSpace() {
     world_map_[pos_.y][pos_.x] = nullptr;
+}
+
+void Organism::Print(std::ostream &os) const {
+    os << type_ << " at position: " << pos_ << " age: " << age_ << " str: " << str_ << " init: " << init_;
+}
+
+std::ostream &Organism::Save(std::ostream &os) const {
+    os << static_cast<int>(type_) << ' ' << pos_.y << ' ' << pos_.x << ' ' << str_ << ' ' << init_ << '\n';
+    return os;
 }

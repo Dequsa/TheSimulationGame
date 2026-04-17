@@ -8,7 +8,7 @@
 
 namespace GUARANA {
     constexpr int STR = 0;
-    constexpr char SPRITE = '^';
+    constexpr char SPRITE = '+';
     constexpr auto TYPE =  OrganismTypes::GUARANA;
     constexpr int STR_INCREASE = 3;
 }

@@ -3,6 +3,10 @@ project(C__1)
 
 set(CMAKE_CXX_STANDARD 20)
 
+set(CURSES_NEED_NCURSES TRUE)
+find_package(Curses REQUIRED)
+include_directories(${CURSES_INCLUDE_DIR})
+
 add_executable(C__1 main.cpp
         main.h
         WorldManager.cpp
@@ -26,17 +30,13 @@ add_executable(C__1 main.cpp
         Animals/Antelope.h
         Utils.h
         Utils.cpp
-<<<<<<< HEAD
         Animals/Human.cpp
         Animals/Human.h
-=======
-        Plants/Grass.cpp
-        Plants/Grass.h
-        Plants/SowThistle.cpp
-        Plants/SowThistle.h
-        Plants/Guarana.cpp
-        Plants/Guarana.h
-        Plants/Belladona.cpp
-        Plants/Belladona.h
->>>>>>> bea068097b7c83c31810fd9085407999174f7068
+        Plants/Hogweed.cpp
+        Plants/Hogweed.h
+        Animals/Human.cpp
+        Animals/Human.h
+main
 )
+
+target_link_libraries(C__1 ${CURSES_LIBRARIES})

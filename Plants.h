@@ -13,13 +13,15 @@ public:
 
     ~Plants() override = default;
 
-    virtual UpdateData Update() override;
+    virtual UpdateData Update(std::vector<std::string> &message_buffer) override;
 
     virtual bool SpecialCheck(Organism &other) override { return false; }
 
-    virtual void SpecialAbility() override {}
+    virtual void SpecialAbility(std::vector<std::string> &message_buffer) override {}
 
     virtual void Render() override;
+
+    void Print(std::ostream &os) const override;
 
     virtual InteractionTypes CheckCollision();
 };

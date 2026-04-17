@@ -32,7 +32,7 @@ public:
 
     bool SpecialCheck(const Organism &other) const override;
 
-    void SpecialAbility() override;
+    void SpecialAbility( std::vector<std::string> &message_buffer) override;
 
     Position SetMovementVector(const DIRECTIONS dir) override;
 

@@ -7,7 +7,9 @@
 #pragma once
 #include <iostream>
 
+
 class Organism;
+class Plants;
 
 struct Position {
     Position &operator+=(const Position &that) {
@@ -48,30 +50,42 @@ enum class DIRECTIONS {
     BOT_MID,
     BOT_RIGHT,
 
-    DIR_COUNT
+    DIR_COUNT,
+
+    HUMAN_SPECIAL
 };
 
 enum class OrganismTypes {
-    WOLF, // 0
-    SHEEP, // 1
-    FOX, // 2
-    TURTLE, // 3
-    ANTELOPE, // 4
     GRASS,
     SOWTHISTLE,
     GUARANA,
     BELLADONNA,
-    NONE // can be also used as count of types
+    HOGWEED,
+    // below 5 plants
+
+    // above and equal 5 animals
+    WOLF, // 5
+    SHEEP,
+    FOX,
+    TURTLE,
+    ANTELOPE,
+    NONE, // can be also used as count of types
+    HUMAN,
 };
 
 std::ostream &operator<<(std::ostream &os, const OrganismTypes type);
+
 std::ostream &operator<<(std::ostream &os, const Position &pos);
+
 std::ostream &operator<<(std::ostream &os, const Organism &org);
+
+std::ostream &operator<<(std::ostream &os, const Plants &org);
 
 enum class InteractionTypes {
     FIGHT,
     REPRODUCE,
     MOVE,
+    AOE_KILL,
     NONE
 };
 
@@ -90,6 +104,16 @@ struct PlantData {
 
 namespace MapSprites {
     constexpr char EMPTY = '.';
+}
+
+namespace KEYS {
+    constexpr char SAVE = 'o';
+    constexpr char UP = 'w';
+    constexpr char DOWN = 's';
+    constexpr char LEFT = 'a';
+    constexpr char RIGHT = 'd';
+    constexpr char EXIT = 'x';
+    constexpr char ABILITY = 'f';
 }
 
 #endif //C__1_UTILS_H

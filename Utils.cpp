@@ -4,6 +4,7 @@
 
 #include "Utils.h"
 #include "Organism.h"
+#include "Plants.h"
 
 std::ostream &operator<<(std::ostream &os, const OrganismTypes type) {
     switch (type) {
@@ -17,6 +18,8 @@ std::ostream &operator<<(std::ostream &os, const OrganismTypes type) {
             break;
         case OrganismTypes::ANTELOPE: os << "Antelope";
             break;
+        case OrganismTypes::HUMAN: os << "Human";
+            break;
         case OrganismTypes::NONE: os << "None";
             break;
         case OrganismTypes::GRASS: os << "Grass";
@@ -26,6 +29,8 @@ std::ostream &operator<<(std::ostream &os, const OrganismTypes type) {
         case OrganismTypes::GUARANA: os << "Guarana";
             break;
         case OrganismTypes::BELLADONNA: os << "Belladonna";
+            break;
+        case OrganismTypes::HOGWEED: os << "Sosnowski Hogweed";
             break;
         default:
             break;
@@ -41,6 +46,7 @@ std::ostream &operator<<(std::ostream &os, const Position &pos) {
 
 
 std::ostream &operator<<(std::ostream &os, const Organism &org) {
-    os << org.GetType() << " at position: " << org.GetPosition() << " age: " << org.GetAge() << " str: " << org.GetStr()            << " init: " << org.GetInit();
+    // os << org.GetType() << " at position: " << org.GetPosition() << " age: " << org.GetAge() << " str: " << org.GetStr() << " init: " << org.GetInit();
+    org.Print(os);
     return os;
 }

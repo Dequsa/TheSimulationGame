@@ -13,7 +13,7 @@ class Organism;
 struct AnimalData;
 struct UpdateData;
 namespace ReturnCodes {
-    constexpr int OK = 0;
+    constexpr int OKAY = 0;
     constexpr int ERROR = -1;
     constexpr int SPECIAL_ABILITY = -2;
     constexpr int SPECIAL_DEFENDER = -3;
@@ -32,11 +32,12 @@ struct BabyResults {
 class WorldManager {
     std::vector<std::unique_ptr<Organism> > organisms_;
     std::vector<std::vector<Organism*> > world_map_;
+    std::vector<std::string> message_buffer_;
 
     // special abilities
     bool CheckIfAttackerIsFox(const Organism &org1, const Organism &org2);
 
-    bool CheckMapContains(const std::vector<Position> &positions) const;
+    bool CheckMapContains(const std::vector<Position> &positions);
 
     Position ChooseAndSetSpawnPoint() const;
 
@@ -61,20 +62,31 @@ class WorldManager {
 
     void ResetActivityAllOrganisms();
 
+    std::vector<Organism *> FindAffected(const std::vector<Position> &positions) const;
+
     void SortOrganisms();
 
-public:
-    WorldManager(const int map_size, const int organism_count);
-
-    ~WorldManager();
-
-    void Update();
+    void KillArea(std::vector<Organism*> &losers, const std::vector<Position> &positions);
 
     std::unique_ptr<Organism> SpawnAnimals(const OrganismTypes type, const Position &spawn_pos);
 
-    void KillOrganism();
+
+public:
+    WorldManager() = default;
+
+    WorldManager(const int map_size, const int organism_count, const bool load);
+
+    WorldManager(WorldManager &world_manager) = default;
+
+
+    ~WorldManager();
+
+    bool Update(const char key);
 
     void Render();
+
+    bool LoadGame(const std::string &filename);
+    bool SaveGame(const std::string &filename);
 
     std::vector<std::vector<Organism*> > &GetWorldMap() { return world_map_; }
 };
