@@ -6,11 +6,11 @@ struct LoadData {
     int organism_count = 1;
 };
 
-LoadData LoadMapSize (const std::string &map_path) {
+LoadData LoadMapSize(const std::string &map_path) {
     using namespace std;
     fstream map_file(map_path);
 
-    if (!map_file) return {-1 , -1};
+    if (!map_file) return {-1, -1};
 
     std::string size;
     getline(map_file, size);
@@ -20,10 +20,9 @@ LoadData LoadMapSize (const std::string &map_path) {
     int organism_count = -1;
     stream >> map_size >> organism_count;
 
-    if (map_size < 0 || organism_count < 0) return {-1 , -1};
+    if (map_size < 0 || organism_count < 0) return {-1, -1};
 
     return {map_size, organism_count};
-
 }
 
 int main() {
@@ -51,7 +50,6 @@ int main() {
 
     WorldManager wm(map_size, org_num, choice == 'l');
     while (true) {
-
         const int input = getch();
 
         const char key = static_cast<char>(input);
@@ -61,8 +59,13 @@ int main() {
         if (key == 'x') {
             break;
         }
-        if (!wm.Update(key)) return 0;
+        if (!wm.Update(key)) break;
     }
+
+    keypad(stdscr, FALSE);
+    echo();
+    nocbreak();
     endwin();
+
     return 0;
 }

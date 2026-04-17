@@ -11,7 +11,7 @@ namespace HUMAN{
 }
 
 class Human final : public Animal {
-    static constexpr AnimalData data_ = {
+     static constexpr AnimalData data_ = {
         HUMAN::STR,
         HUMAN::INIT,
         HUMAN::SPRITE,
@@ -42,8 +42,6 @@ public:
     UpdateData Update(std::vector<std::string> &message_buffer) override;
 
     ~Human() override = default;
-
-    // UpdateData Update(const char key) override;
 };
 
 #endif //C__1_HUMAN_H

@@ -81,6 +81,14 @@ void Organism::AgeUp(const int n) {
     age_ += n;
 }
 
+void Organism::SetStr(const int n) {
+    str_ = n;
+}
+
+void Organism::SetInit(const int n) {
+    init_ = n;
+}
+
 bool Organism::GetActivity() const {
     return has_acted_;
 }

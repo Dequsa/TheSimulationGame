@@ -108,6 +108,10 @@ public:
 
     void AgeUp(int n);
 
+    // used in loading
+    void SetStr(const int n);
+    void SetInit(const int n);
+
     // other
     virtual void Render() = 0;
 };

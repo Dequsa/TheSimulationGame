@@ -43,6 +43,7 @@ void Human::SpecialAbility(std::vector<std::string> &message_buffer) {
         return;
     }
     buff_time_ = HUMAN::POTION_STR;
+    has_buffed_ = true;
 
     AddStr(HUMAN::POTION_STR);
     std::ostringstream oss;

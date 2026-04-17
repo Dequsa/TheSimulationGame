@@ -50,11 +50,11 @@ WorldManager::WorldManager(const int map_size, const int organism_count, const b
 }
 
 WorldManager::~WorldManager() {
-    world_map_.clear();
-    world_map_.shrink_to_fit();
-
     organisms_.clear();
     organisms_.shrink_to_fit();
+
+    world_map_.clear();
+    world_map_.shrink_to_fit();
 }
 
 void WorldManager::SortOrganisms() {
@@ -546,15 +546,16 @@ bool WorldManager::LoadGame(const std::string &filename) {
             return false;
         }
 
-        // if (loaded_org) {
-        //     loaded_org->SetStr(str);
-        //     loaded_org->SetInit(init);
-        //
-        //     // 3. Put it in the list
-        //     organisms_.push_back(loaded_org);
-        // }
+        auto org = SpawnAnimals(static_cast<OrganismTypes>(type), {x, y});
 
-        organisms_.push_back(SpawnAnimals(static_cast<OrganismTypes>(type), {x, y}));
+        if (org) {
+            org->SetStr(str);
+            org->SetInit(init);
+            organisms_.push_back(std::move(org));
+        } else {
+            file.close();
+            return false;
+        }
     }
     file.close();
     return true;
