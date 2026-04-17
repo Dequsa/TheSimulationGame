@@ -29,7 +29,12 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="da181c08-0b1f-47d0-b404-23907a8a0a4a" name="Changes" comment="Fixed invalid fighters ids amount" />
+    <list default="true" id="da181c08-0b1f-47d0-b404-23907a8a0a4a" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Animals/Human.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Animals/Human.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -218,7 +223,7 @@
     "to.speed.mode.migration.done": "true",
     "vue.rearranger.settings.migration": "true"
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="CMake Application.C__1">
     <configuration name="C__1" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="true" PASS_PARENT_ENVS_2="true" PROJECT_NAME="C__1" TARGET_NAME="C__1" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="C__1" RUN_TARGET_NAME="C__1">
       <method v="2">
