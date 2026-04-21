@@ -222,7 +222,7 @@ BabyResults WorldManager::MakeLife(const OrganismTypes parent_race, const Positi
 
     std::ostringstream oss;
     if (!child) {
-        oss << "Error while spawning child\n";
+        oss << "Error while spawning child: Not enough Space\n";
         message_buffer_.push_back(oss.str());
         return {ReturnCodes::ERROR, nullptr};
     }
@@ -349,6 +349,9 @@ bool WorldManager::Update(const char key) {
         return false;
     }
 
+    std::ostringstream oss;
+    oss << "Current Turn: " << turn_num_++ << '\n';
+
     ResetActivityAllOrganisms();
     std::vector<std::unique_ptr<Organism> > new_babies;
     std::vector<Organism *> losers;
@@ -386,13 +389,13 @@ bool WorldManager::Update(const char key) {
             }
 
             default: {
-                std::ostringstream oss;
                 oss << "Error while performing and update on organism\n";
-                message_buffer_.push_back(oss.str());
                 break;
             }
         }
     }
+
+    message_buffer_.push_back(oss.str());
 
     bool need_sort = false;
 
@@ -423,14 +426,6 @@ bool WorldManager::AddOrganisms(std::vector<std::unique_ptr<Organism> > &new_org
     return true;
 }
 
-
-bool CheckDelete(const int id) {
-    if (id == ReturnCodes::ERROR || id == ReturnCodes::SPECIAL_ABILITY || id == ReturnCodes::SPECIAL_DEFENDER) {
-        return false;
-    }
-    return true;
-}
-
 bool WorldManager::DeleteOrganisms(std::vector<Organism *> &dead) {
     if (dead.empty()) {
         return false;
@@ -451,8 +446,12 @@ bool WorldManager::DeleteOrganisms(std::vector<Organism *> &dead) {
 void WorldManager::Render() {
     clear();
 
+    bool is_human_alive = false;
     for (const auto &org: organisms_) {
         org->Render();
+        if (org->GetType() == OrganismTypes::HUMAN && org->GetLife()) {
+            is_human_alive = true;
+        }
     }
 
     for (const auto &row: world_map_) {
@@ -467,7 +466,11 @@ void WorldManager::Render() {
         printw("\n");
     }
 
-    printw("\nUse W/A/S/D to move. Press X to exit.\n");
+    if (is_human_alive) {
+        printw("\nUse W/A/S/D to move. Press F to drink magic potion. Press O to save. Press X to exit.\n");
+    } else {
+        printw("\nPress any to make a turn. Press O to save. Press X to exit.\n");
+    }
 
     for (const auto &msg: message_buffer_) {
         printw("%s", msg.c_str());

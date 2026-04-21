@@ -30,6 +30,7 @@ struct BabyResults {
 };
 
 class WorldManager {
+    int turn_num_ = 0;
     std::vector<std::unique_ptr<Organism> > organisms_;
     std::vector<std::vector<Organism*> > world_map_;
     std::vector<std::string> message_buffer_;
