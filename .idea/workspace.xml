@@ -29,7 +29,9 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="da181c08-0b1f-47d0-b404-23907a8a0a4a" name="Changes" comment="Fixed invalid fighters ids amount">
+    <list default="true" id="da181c08-0b1f-47d0-b404-23907a8a0a4a" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Animals/Human.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Animals/Human.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Saves/SaveData.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Saves/SaveData.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/WorldManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/WorldManager.cpp" afterDir="false" />
@@ -57,15 +59,13 @@
     "url": "https://github.com/Dequsa/TheSimulationGame.git",
     "accountId": "490d7546-a391-43af-a363-064a786a1648"
   }
-}]]></component>
+}</component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/Animals.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Animals.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Animals/Wolf.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Animals/Wolf.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/WorldManager.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
@@ -265,7 +265,6 @@
       <workItem from="1776272237812" duration="6013000" />
       <workItem from="1776329265191" duration="75000" />
       <workItem from="1776329549847" duration="11000" />
-      <workItem from="1776766768461" duration="331000" />
     </task>
     <task id="LOCAL-00001" summary="Fixed invalid fighters ids amount">
       <option name="closed" value="true" />
