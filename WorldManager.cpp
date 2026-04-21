@@ -222,7 +222,7 @@ BabyResults WorldManager::MakeLife(const OrganismTypes parent_race, const Positi
 
     std::ostringstream oss;
     if (!child) {
-        oss << "Error while spawning child\n";
+        oss << "Error while spawning child: Not enough Space\n";
         message_buffer_.push_back(oss.str());
         return {ReturnCodes::ERROR, nullptr};
     }
