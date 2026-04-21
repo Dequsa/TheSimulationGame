@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 4.0)
+cmake_minimum_required(VERSION 3.10)
 project(C__1)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -34,9 +34,11 @@ add_executable(C__1 main.cpp
         Animals/Human.h
         Plants/Hogweed.cpp
         Plants/Hogweed.h
-        Animals/Human.cpp
-        Animals/Human.h
-main
+        Plants/SowThistle.cpp
+        Plants/SowThistle.h
+        Plants/Guarana.cpp
+        Plants/Guarana.h
+        Plants/Belladona.cpp
 )
 
 target_link_libraries(C__1 ${CURSES_LIBRARIES})
