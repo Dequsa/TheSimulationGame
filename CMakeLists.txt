@@ -30,18 +30,13 @@ add_executable(C__1 main.cpp
         Animals/Antelope.h
         Utils.h
         Utils.cpp
-        Plants/Grass.cpp
-        Plants/Grass.h
-        Plants/SowThistle.cpp
-        Plants/SowThistle.h
-        Plants/Guarana.cpp
-        Plants/Guarana.h
-        Plants/Belladona.cpp
-        Plants/Belladona.h
+        Animals/Human.cpp
+        Animals/Human.h
         Plants/Hogweed.cpp
         Plants/Hogweed.h
         Animals/Human.cpp
         Animals/Human.h
+main
 )
 
 target_link_libraries(C__1 ${CURSES_LIBRARIES})
