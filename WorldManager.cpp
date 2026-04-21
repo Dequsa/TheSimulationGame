@@ -22,7 +22,7 @@ WorldManager::WorldManager(const int map_size, const int organism_count, const b
     std::srand(time(NULL));
 
     if (load) {
-        if (!LoadGame("../Saves/SaveData.txt")) return;
+        if (!LoadGame(SAVE_FILE_PATH)) return;
         SortOrganisms();
         Render();
     } else {
@@ -345,7 +345,7 @@ void WorldManager::KillArea(std::vector<Organism *> &losers, const std::vector<P
 
 bool WorldManager::Update(const char key) {
     if (key == KEYS::SAVE) {
-        SaveGame("../Saves/SaveData.txt");
+        SaveGame(SAVE_FILE_PATH);
         return false;
     }
 
@@ -529,7 +529,10 @@ std::unique_ptr<Organism> WorldManager::SpawnAnimals(const OrganismTypes type, c
 bool WorldManager::LoadGame(const std::string &filename) {
     std::ifstream file(filename);
 
-    if (!file.is_open()) return false;
+    if (!file) {
+        std::cerr << "Could not open file " << filename << std::endl;
+        return false;
+    }
     std::string line;
 
     // skip the map size line
@@ -567,7 +570,12 @@ bool WorldManager::LoadGame(const std::string &filename) {
 bool WorldManager::SaveGame(const std::string &filename) {
     std::ofstream file(filename);
 
-    if (!file) return false;
+    if (!file) {
+        std::cerr << "Could not open file " << filename << std::endl;
+        return false;
+    }
+
+
 
     file << static_cast<int>(world_map_.size()) << ' ' << static_cast<int>(organisms_.size()) << '\n';
 

@@ -9,6 +9,8 @@
 #include <vector>
 #include <memory>
 
+constexpr  std::string SAVE_FILE_PATH = "SaveData.txt";
+
 class Organism;
 struct AnimalData;
 struct UpdateData;
