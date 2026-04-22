@@ -575,7 +575,7 @@ bool WorldManager::SaveGame(const std::string &filename) {
         return false;
     }
 
-
+;
 
     file << static_cast<int>(world_map_.size()) << ' ' << static_cast<int>(organisms_.size()) << '\n';
 
